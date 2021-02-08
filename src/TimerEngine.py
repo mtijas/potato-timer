@@ -14,7 +14,7 @@ class TimerEngine:
                 ("work", 2),
                 ("short break", 1),
                 ("work", 2),
-                ("short break", 1),
+                ("kissat koiria", 0.1),
                 ("work", 2),
                 ("short break", 1),
                 ("work", 2),

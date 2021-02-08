@@ -64,7 +64,7 @@ class UserInterface:
             elif self.engine.timer_name == "long break":
                 self.status_line.bkgd(' ', curses.color_pair(4))
             else:
-                self.status_line.bkgd(' ', curses.color_pair(1))
+                self.status_line.bkgd(' ', curses.color_pair(5))
 
             status = f"Timer running: {self.engine.timer_name}"
             x = self.calc_start_x(self.status_line, status)
@@ -155,6 +155,7 @@ class UserInterface:
         curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
         curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_YELLOW)
         curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(8, curses.COLOR_BLUE, curses.COLOR_BLACK)
 
