@@ -45,6 +45,8 @@ class UserInterface:
                 self.engine.reset_timer()
             elif c == ord('h'):
                 self.show_help()
+            elif c == curses.KEY_RESIZE:
+                self.resize_windows()
            
             self.engine.update()
             self.handle_alarm()
@@ -115,19 +117,33 @@ class UserInterface:
             self.sidebar.border()
 
     def create_windows(self):
-        # calculate window sizes
-        height = curses.LINES
-        width = curses.COLS - 1
-        if width >= 60:
-            content_width = round(width * 0.67)
-            sidebar_width = width - content_width
-            self.sidebar = curses.newwin(height, sidebar_width, 0, content_width)
+        content_width = curses.COLS
+        if curses.COLS >= 60:
+            content_width = round(curses.COLS * 0.67)
+            sidebar_width = curses.COLS - content_width
+            self.sidebar = curses.newwin(curses.LINES, sidebar_width, 0, content_width)
         else:
-            content_width = width
             self.sidebar = None
 
-        self.content = curses.newwin(height-3, content_width, 3, 0)
+        self.content = curses.newwin(curses.LINES-3, content_width, 3, 0)
         self.status_line = curses.newwin(3, content_width, 0, 0)
+
+    def resize_windows(self):
+        curses.update_lines_cols()
+        content_width = curses.COLS
+        if curses.COLS >= 60:
+            content_width = round(curses.COLS * 0.67)
+            sidebar_width = curses.COLS - content_width
+            if self.sidebar:
+                self.sidebar.resize(curses.LINES, sidebar_width)
+            else:
+                self.sidebar = curses.newwin(curses.LINES, sidebar_width, 0, content_width)
+                self.sidebar.border()
+        else:
+            self.sidebar = None
+
+        self.content.resize(curses.LINES-3, content_width)
+        self.status_line.resize(3, content_width)
 
     def update_sidebar(self):
         self.sidebar.addstr(1, 2, "Current timers")
