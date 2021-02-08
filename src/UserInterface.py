@@ -9,6 +9,7 @@ class UserInterface:
 
     def start(self):
         self.init_curses()
+        curses.setsyx(-1, -1) # Set cursor away and leaveok True
         self.build_user_interface()
         try:
             self.main_loop()
@@ -30,7 +31,7 @@ class UserInterface:
 
     def main_loop(self):
         while True:
-            c = self.content.getch()
+            c = self.status_line.getch()
             if c == ord('q'):
                 break
             elif c == ord('s'):
@@ -51,13 +52,19 @@ class UserInterface:
             self.engine.update()
             self.handle_alarm()
             self.update_status()
-            if self.sidebar:
+            if self.sidebar is not None:
                 self.update_sidebar()
-            self.update_content()
+            if self.content is not None:
+                self.update_content()
             self.refresh_windows()
             time.sleep(0.5)
 
     def update_status(self):
+        max_y, max_x = self.status_line.getmaxyx()
+        if max_y > 1:
+            y = 1
+        else:
+            y = 0
         self.empty_window(self.status_line)
         if self.engine.running:
             if self.engine.timer_name == "work":
@@ -71,11 +78,11 @@ class UserInterface:
 
             status = f"Timer running: {self.engine.timer_name}"
             x = self.calc_start_x(self.status_line, status)
-            self.status_line.addstr(1, x, status)
+            self.status_line.addstr(y, x, status)
         else:
             self.status_line.bkgd(' ', curses.color_pair(1))
             x = self.calc_start_x(self.status_line, "Timer stopped")
-            self.status_line.addstr(1, x, "Timer stopped")
+            self.status_line.addstr(y, x, "Timer stopped")
 
     def update_content(self):
         y, x = self.content.getmaxyx()
@@ -110,11 +117,10 @@ class UserInterface:
     def build_user_interface(self):
         self.init_color_pairs()
         self.create_windows()
-        self.content.nodelay(True)
-        self.status_line.border()
-        self.content.border()
-        if self.sidebar:
-            self.sidebar.border()
+        self.set_no_delays()
+        self.empty_window(self.status_line)
+        self.empty_window(self.content)
+        self.empty_window(self.sidebar)
 
     def create_windows(self):
         content_width = curses.COLS
@@ -125,8 +131,12 @@ class UserInterface:
         else:
             self.sidebar = None
 
-        self.content = curses.newwin(curses.LINES-3, content_width, 3, 0)
-        self.status_line = curses.newwin(3, content_width, 0, 0)
+        if curses.LINES >= 6:
+            self.content = curses.newwin(curses.LINES-3, content_width, 3, 0)
+            self.status_line = curses.newwin(3, content_width, 0, 0)
+        else:
+            self.content = None
+            self.status_line = curses.newwin(1, content_width, 0, 0)
 
     def resize_windows(self):
         curses.update_lines_cols()
@@ -134,16 +144,26 @@ class UserInterface:
         if curses.COLS >= 60:
             content_width = round(curses.COLS * 0.67)
             sidebar_width = curses.COLS - content_width
-            if self.sidebar:
+            if self.sidebar is not None:
                 self.sidebar.resize(curses.LINES, sidebar_width)
+                self.sidebar.mvwin(0, content_width)
             else:
                 self.sidebar = curses.newwin(curses.LINES, sidebar_width, 0, content_width)
-                self.sidebar.border()
+            self.empty_window(self.sidebar)
         else:
             self.sidebar = None
 
-        self.content.resize(curses.LINES-3, content_width)
-        self.status_line.resize(3, content_width)
+        if curses.LINES >= 6:
+            if self.content is not None:
+                self.content.resize(curses.LINES-3, content_width)
+            else:
+                self.content = curses.newwin(curses.LINES-3, content_width, 3, 0)
+            self.status_line.resize(3, content_width)
+        else:
+            self.content = None
+            self.status_line.resize(1, content_width)
+                
+        self.set_no_delays()
 
     def update_sidebar(self):
         self.sidebar.addstr(1, 2, "Current timers")
@@ -156,15 +176,19 @@ class UserInterface:
                 self.sidebar.addstr(idx+4, 2, f"{timer[0]} ({timer[1]})", curses.color_pair(1))
 
     def show_help(self):
+        if self.content is None:
+            return
+        y, x = self.content.getmaxyx()
+        max_x = x-4
         self.engine.stop_timer()
         self.update_status()
         self.empty_window(self.content)
-        self.content.addstr(1, 2, "Tomato Timer Help")
-        self.content.addstr(3, 2, "s: Start and stop timers")
-        self.content.addstr(4, 2, "n: Next timer (starts from 0)")
-        self.content.addstr(5, 2, "r: Reset current timer")
-        self.content.addstr(6, 2, "h: Show/hide help")
-        self.content.addstr(7, 2, "q: Quit")
+        self.content.addnstr(1, 2, "Tomato Timer Help", max_x)
+        self.content.addnstr(3, 2, "s: Start and stop timers", max_x)
+        self.content.addnstr(4, 2, "n: Next timer (starts from 0)", max_x)
+        self.content.addnstr(5, 2, "r: Reset current timer", max_x)
+        self.content.addnstr(6, 2, "h: Show/hide help", max_x)
+        self.content.addnstr(7, 2, "q: Quit", max_x)
         self.refresh_windows()
         while True:
             c = self.content.getch()
@@ -183,13 +207,18 @@ class UserInterface:
 
     def refresh_windows(self):
         self.status_line.refresh()
-        self.content.refresh()
+        if self.content:
+            self.content.refresh()
         if self.sidebar:
             self.sidebar.refresh()
 
     def empty_window(self, window):
+        if window is None:
+            return
         window.clear()
-        window.border()
+        y, x = window.getmaxyx()
+        if y >= 3:
+            window.border()
 
     def calc_start_x(self, window, text):
         y, x = window.getmaxyx()
@@ -199,3 +228,10 @@ class UserInterface:
         else:
             return 0
 
+    def set_no_delays(self):
+        if self.content is not None:
+            self.content.nodelay(True)
+        if self.status_line is not None:
+            self.status_line.nodelay(True)
+        if self.sidebar is not None:
+            self.sidebar.nodelay(True)
