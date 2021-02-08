@@ -49,7 +49,8 @@ class UserInterface:
             self.engine.update()
             self.handle_alarm()
             self.update_status()
-            self.update_sidebar()
+            if self.sidebar:
+                self.update_sidebar()
             self.update_content()
             self.refresh_windows()
             time.sleep(0.5)
@@ -76,27 +77,28 @@ class UserInterface:
 
     def update_content(self):
         y, x = self.content.getmaxyx()
+        max_x = x-4
         self.empty_window(self.content)
         elapsed_delta = timedelta(seconds = round(self.engine.time_elapsed))
         duration_delta = timedelta(seconds = self.engine.timer_duration)
         total_delta = timedelta(seconds = round(self.engine.total_time_elapsed))
         working_delta = timedelta(seconds = round(self.engine.total_time_working))
 
-        self.content.addstr(1, 2, f"Current timer: {self.engine.timer_name}")
-        self.content.addstr(2, 2, f"{str(elapsed_delta)}/{str(duration_delta)}")
-        self.content.addstr(4, 2, f"Completed:")
-        self.content.addstr(5, 2, f"Work stints:  {self.engine.work_count}")
-        self.content.addstr(6, 2, f"Short breaks: {self.engine.short_count}")
-        self.content.addstr(7, 2, f"Long breaks:  {self.engine.long_count}")
-        self.content.addstr(9, 2, f"Total time spent:   {str(total_delta)}")
-        self.content.addstr(10, 2, f"Time spent working: {str(working_delta)}")
+        self.content.addnstr(1, 2, f"{str(elapsed_delta)}/{str(duration_delta)}", max_x)
+        if y > 12:
+            self.content.addnstr(3, 2, f"Completed:", max_x)
+            self.content.addnstr(4, 2, f"Work stints:  {self.engine.work_count}", max_x)
+            self.content.addnstr(5, 2, f"Short breaks: {self.engine.short_count}", max_x)
+            self.content.addnstr(6, 2, f"Long breaks:  {self.engine.long_count}", max_x)
+            self.content.addnstr(8, 2, f"Total time spent:   {str(total_delta)}", max_x)
+            self.content.addnstr(9, 2, f"Time spent working: {str(working_delta)}", max_x)
         
-        if self.engine.started_at != None:
-            start_time = time.strftime("%H:%M:%S", self.engine.started_at)
-            self.content.addstr(11, 2, f"First timer started at {start_time}")
+            if self.engine.started_at != None:
+                start_time = time.strftime("%H:%M:%S", self.engine.started_at)
+                self.content.addnstr(10, 2, f"First timer started at {start_time}", max_x)
         
-        self.content.addstr(0, x-10, f'{time.strftime("%H:%M:%S")}')
-        self.content.addstr(y-1, 2, "(s)tart/(s)top, (h)elp, (q)uit")
+        self.content.addnstr(0, x-10, f'{time.strftime("%H:%M:%S")}', max_x)
+        self.content.addnstr(y-1, 2, "(s)tart/(s)top, (h)elp, (q)uit", max_x)
 
     def handle_alarm(self):
         if self.engine.alarm:
@@ -109,18 +111,22 @@ class UserInterface:
         self.content.nodelay(True)
         self.status_line.border()
         self.content.border()
-        self.sidebar.border()
+        if self.sidebar:
+            self.sidebar.border()
 
     def create_windows(self):
         # calculate window sizes
-        height = curses.LINES - 1
+        height = curses.LINES
         width = curses.COLS - 1
-        content_width = round(width * 0.67)
-        sidebar_width = width - content_width
+        if width >= 60:
+            content_width = round(width * 0.67)
+            sidebar_width = width - content_width
+            self.sidebar = curses.newwin(height, sidebar_width, 0, content_width)
+        else:
+            content_width = width
+            self.sidebar = None
 
-        # create windows
         self.content = curses.newwin(height-3, content_width, 3, 0)
-        self.sidebar = curses.newwin(height, sidebar_width, 0, content_width)
         self.status_line = curses.newwin(3, content_width, 0, 0)
 
     def update_sidebar(self):
@@ -162,7 +168,8 @@ class UserInterface:
     def refresh_windows(self):
         self.status_line.refresh()
         self.content.refresh()
-        self.sidebar.refresh()
+        if self.sidebar:
+            self.sidebar.refresh()
 
     def empty_window(self, window):
         window.clear()
