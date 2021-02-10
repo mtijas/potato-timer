@@ -1,7 +1,8 @@
 import time
 
 class TimerEngine:
-  def __init__(self):
+  def __init__(self, settings):
+    self._settings = settings
     self._alarm = False
     self._work_count = 0
     self._short_count = 0
@@ -10,16 +11,6 @@ class TimerEngine:
     self._previous_monotonic = 0
     self._running = False
     self._started_at = None
-    self._timers = [
-        ("work", 2),
-        ("short break", 1),
-        ("work", 2),
-        ("kissat koiria", 0.1),
-        ("work", 2),
-        ("short break", 1),
-        ("work", 2),
-        ("long break", 3),
-    ]
     self._timer_name = None
     self._timer_duration = 0
     self._time_elapsed = 0
@@ -70,7 +61,7 @@ class TimerEngine:
   def next_timer(self):
     self.calc_stats()
     self._current_timer_id += 1
-    if self._current_timer_id >= len(self._timers):
+    if self._current_timer_id >= len(self._settings.timers):
       self._current_timer_id = 0
     self.select_timer(self._current_timer_id)
 
@@ -91,12 +82,9 @@ class TimerEngine:
 
   """Load timer from timers list"""
   def select_timer(self, timer_id):
-    if timer_id < len(self._timers):
-      name, duration = self._timers[timer_id]
-      self._timer_name = name
-      self._timer_duration = duration*60
-    else:
-      raise IndexError("Timer not found")
+    name, duration = self._settings.get_timer(timer_id)
+    self._timer_name = name
+    self._timer_duration = duration*60
   
   """Reset current timer to beginning"""
   def reset_timer(self):
@@ -117,10 +105,6 @@ class TimerEngine:
   @property
   def alarm(self):
     return self._alarm
-
-  @property
-  def timers(self):
-    return self._timers
 
   @property
   def started_at(self):
