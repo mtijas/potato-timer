@@ -9,14 +9,22 @@ class UserInterface:
     self.engine = engine
     self.screen = screen
 
+  """Start user interface"""
   def start(self):
     self.screen.start()
-    self.build_user_interface()
+    self.manage_windows()
+    self.screen.erase_window("statusline")
+    self.screen.erase_window("content")
+    self.screen.erase_window("sidebar")
     try:
       self.main_loop()
     finally:
       self.screen.stop()
 
+  """User interface main loop
+  # 
+  # Handles keystrokes, updates UI and runs timer engine
+  """
   def main_loop(self):
     while True:
       c = self.screen.get_char("statusline")
@@ -34,9 +42,10 @@ class UserInterface:
         self.engine.reset_timer()
       elif c == ord('h'):
         self.show_help()
-      # @TODO: Implement proper resize callback
-      #elif c == curses.KEY_RESIZE:
-      #  self.resize_windows()
+      
+      if self.screen.is_resized:
+        self.manage_windows()
+        self.screen.ack_resize()
 
       self.engine.update()
       self.handle_alarm()
@@ -47,7 +56,9 @@ class UserInterface:
         self.update_content()
       time.sleep(0.5)
 
+  """Update statusline window"""
   def update_status(self):
+    self.screen.erase_window("statusline")
     max_y, max_x = self.screen.get_max_yx("statusline")
     if max_y > 1:
       y = 1
@@ -70,7 +81,9 @@ class UserInterface:
       self.screen.add_centered_str("statusline", y, "Timer stopped")
     self.screen.refresh_window("statusline")
 
+  """Update content window"""
   def update_content(self):
+    self.screen.erase_window("content")
     max_y, max_x = self.screen.get_max_yx("content")
     elapsed_delta = timedelta(seconds=round(self.engine.time_elapsed))
     duration_delta = timedelta(seconds=self.engine.timer_duration)
@@ -102,7 +115,9 @@ class UserInterface:
     self.screen.add_str("content", max_y-1, 2, "(s)tart/(s)top, (h)elp, (q)uit")
     self.screen.refresh_window("content")
 
+  """Update sidebar window"""
   def update_sidebar(self):
+    self.screen.erase_window("sidebar")
     self.screen.add_str("sidebar", 1, 2, "Current timers")
     self.screen.add_str("sidebar", 2, 2, "Type (time):")
     self.screen.add_hline("sidebar", 3, 2, "-")
@@ -124,68 +139,45 @@ class UserInterface:
         )
     self.screen.refresh_window("sidebar")
 
+  """Handle timer alarms"""
   def handle_alarm(self):
     if self.engine.alarm:
       self.screen.alarm()
       self.engine.ack_alarm()
 
-  def build_user_interface(self):
-    self.create_windows()
+  """Create, remove and resize windows"""
+  def manage_windows(self):
+    lines, cols = self.screen.screen_size()
+    content_width = cols
+
+    if cols >= 60:
+      content_width = round(cols * 0.67)
+      sidebar_width = cols - content_width
+      self.screen.resize_or_create_window("sidebar", lines, sidebar_width, 0, content_width)
+      self.screen.move_window("sidebar", 0, content_width)
+    else:
+      self.screen.remove_window("sidebar")
+
+    if lines >= 6:
+      self.screen.resize_or_create_window("content", lines-3, content_width, 3, 0)
+      self.screen.resize_or_create_window("statusline", 3, content_width, 0, 0)
+    else:
+      self.screen.remove_window("content")
+      self.screen.resize_or_create_window("statusline", 1, content_width, 0, 0)
+
+    self.screen.erase_window("statusline")
+    self.screen.erase_window("content")
+    self.screen.erase_window("sidebar")
     self.screen.set_nodelays()
-    self.screen.clear_window("statusline")
-    self.screen.clear_window("content")
-    self.screen.clear_window("sidebar")
 
-  def create_windows(self):
-    content_width = curses.COLS
-    if curses.COLS >= 60:
-      content_width = round(curses.COLS * 0.67)
-      sidebar_width = curses.COLS - content_width
-      self.sidebar = curses.newwin(
-        curses.LINES, sidebar_width, 0, content_width)
-    else:
-      self.sidebar = None
-
-    if curses.LINES >= 6:
-      self.content = curses.newwin(curses.LINES-3, content_width, 3, 0)
-      self.status_line = curses.newwin(3, content_width, 0, 0)
-    else:
-      self.content = None
-      self.status_line = curses.newwin(1, content_width, 0, 0)
-
-  def resize_windows(self):
-    curses.update_lines_cols()
-    content_width = curses.COLS
-    if curses.COLS >= 60:
-      content_width = round(curses.COLS * 0.67)
-      sidebar_width = curses.COLS - content_width
-      if self.sidebar is not None:
-        self.sidebar.resize(curses.LINES, sidebar_width)
-        self.sidebar.mvwin(0, content_width)
-      else:
-        self.sidebar = curses.newwin(
-          curses.LINES, sidebar_width, 0, content_width)
-      self.empty_window(self.sidebar)
-    else:
-      self.sidebar = None
-
-    if curses.LINES >= 6:
-      if self.content is not None:
-        self.content.resize(curses.LINES-3, content_width)
-      else:
-        self.content = curses.newwin(
-          curses.LINES-3, content_width, 3, 0)
-      self.status_line.resize(3, content_width)
-    else:
-      self.content = None
-      self.status_line.resize(1, content_width)
-
-    self.set_no_delays()
-
+  """Show help inside content window
+  # 
+  # Halts timers
+  """
   def show_help(self):
     self.engine.stop_timer()
     self.update_status()
-    self.screen.empty_window("content")
+    self.screen.erase_window("content")
     self.screen.add_str("content", 1, 2, "Tomato Timer Help")
     self.screen.add_str("content", 3, 2, "s: Start and stop timers")
     self.screen.add_str("content", 4, 2, "n: Next timer (starts from 0)")
@@ -198,3 +190,4 @@ class UserInterface:
       if c == ord('h'):
         break
       time.sleep(0.5)
+    self.screen.erase_window("content")
