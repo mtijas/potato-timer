@@ -53,13 +53,13 @@ meaningful colors for different types of timers:
 - `long break` is blue
 - Any other type of timer will be yellow. 
 
-Yes, you may call your alarms whatever you like (albeit they all will be yellow).
+Yes, you may call your timers whatever you like (albeit they all will be yellow).
 Set this `False` and the program will be plain black and white.
 
 ### Timers
 Timers are configured as a list of type-duration pairs, where type is basically 
 a name of the timer and duration is given in minutes. Decimals are
-also accepted (i.e. `work: 0.1` is a work timer lasting 6 seconds).
+also accepted (i.e. `duration: 0.1` is a timer lasting 6 seconds).
 
 ### Example of a configuration file
 
