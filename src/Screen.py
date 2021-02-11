@@ -2,8 +2,8 @@ import curses
 from curses import wrapper
 
 class Screen:
-  def __init__(self, settings):
-    self._settings = settings
+  def __init__(self, config):
+    self._config = config
     self._windows = {} # Store windows as a dictionary for easy usage
     self._is_resized = False
     self._use_colors = False
@@ -26,7 +26,7 @@ class Screen:
 
   """Try to use colors"""
   def try_colors(self):
-    if curses.has_colors and self._settings.use_colors:
+    if curses.has_colors and self._config.use_colors:
       self._use_colors = True
       curses.start_color()
       self._init_color_pairs()
@@ -160,9 +160,9 @@ class Screen:
 
   """Alarm"""
   def alarm(self):
-    if self._settings.alarm_type is "beep":
+    if self._config.alarm_type == "beep":
       curses.beep()
-    elif self._settings.alarm_type is "flash":
+    elif self._config.alarm_type == "flash":
       curses.flash()
 
   """Initialize color pairs

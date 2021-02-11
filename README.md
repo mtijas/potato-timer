@@ -28,6 +28,13 @@ Timers can be configured using YAML. The configuration file is searched from the
 folder of the timer. The default config file is named config.yml. User may also provide 
 their own configuration file with the command line option `--config 'path/to/config.yml'`.
 
+Config will be automatically searched from:
+```
+~/.config/mti-tomato-timer/config.yml
+~/.mti-tomato-timer-config.yml
+./config.yml
+```
+
 ### Alarm type
 Alarm type can be either 'beep' or 'flash'. 
 
@@ -60,13 +67,21 @@ also accepted (i.e. `work: 0.1` is a work timer lasting 6 seconds).
 alarm_type: "beep"
 use_colors: True
 timers:
-  - work: 25
-  - short break: 5
-  - work: 25
-  - short break: 5
-  - work: 25
-  - short break: 5
-  - work: 25
-  - long break: 35
+  - type: "work"
+    duration: 25
+  - type: "short break"
+    duration: 5
+  - type: "work"
+    duration: 25
+  - type: "short break"
+    duration: 5
+  - type: "work"
+    duration: 25
+  - type: "short break"
+    duration: 5
+  - type: "work"
+    duration: 25
+  - type: "long break"
+    duration: 35
 
 ```

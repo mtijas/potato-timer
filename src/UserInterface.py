@@ -5,8 +5,8 @@ from datetime import timedelta
 
 
 class UserInterface:
-  def __init__(self, settings, engine, screen):
-    self._settings = settings
+  def __init__(self, config, engine, screen):
+    self._config = config
     self._engine = engine
     self._screen = screen
 
@@ -122,7 +122,7 @@ class UserInterface:
     self._screen.add_str("sidebar", 1, 2, "Current timers")
     self._screen.add_str("sidebar", 2, 2, "Type (time):")
     self._screen.add_hline("sidebar", 3, 2, "-")
-    for idx, timer in enumerate(self._settings.timers):
+    for idx, timer in enumerate(self._config.timers):
       if idx == self._engine.current_timer_id:
         self._screen.add_str(
           "sidebar", idx+4, 2, 
