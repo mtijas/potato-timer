@@ -1,6 +1,5 @@
 import yaml
-import os.path
-from os import path
+from pathlib import Path
 
 class Config:
   def __enter__(self):
@@ -19,8 +18,8 @@ class Config:
         {"type": "custom timer", "duration": 0.4}
     ]
     self._possible_files = [
-      "~/.config/mti-tomato-timer/config.yml",
-      "~/.mti-tomato-timer-config.yml",
+      f"{Path.home()}/.config/mti-tomato-timer/config.yml",
+      f"{Path.home()}/.mti-tomato-timer-config.yml",
       "./config.yml",
     ]
     self._selected_config = self.find_config(config_file)
@@ -30,11 +29,11 @@ class Config:
   """Try to find config file"""
   def find_config(self, config_file):
     if config_file is not None:
-      if path.isfile(config_file):
+      if Path(config_file).is_file():
         return config_file
     
     for possibility in self._possible_files:
-      if path.exists(possibility):
+      if Path(possibility).is_file():
         return possibility
     
     return None
