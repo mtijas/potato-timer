@@ -2,17 +2,18 @@ import curses
 from curses import wrapper
 
 class Screen:
-  def __init__(self):
+  def __init__(self, config):
+    self._config = config
     self._windows = {} # Store windows as a dictionary for easy usage
     self._is_resized = False
+    self._use_colors = False
 
   """Initialize curses with defaults"""
   def start(self):
     self.stdscr = curses.initscr()
     curses.noecho()
     curses.cbreak()
-    curses.start_color()
-    self.init_color_pairs()
+    self.try_colors()
     self.stdscr.keypad(True)
     curses.setsyx(-1, -1)
 
@@ -23,6 +24,12 @@ class Screen:
     curses.echo()
     curses.endwin()
 
+  """Try to use colors"""
+  def try_colors(self):
+    if curses.has_colors and self._config.use_colors:
+      self._use_colors = True
+      curses.start_color()
+      self._init_color_pairs()
 
 
   """Window-specific functions"""
@@ -48,7 +55,8 @@ class Screen:
 
   """Set window background"""
   def set_background(self, name, chr, color):
-    self._windows[name].bkgd(chr, curses.color_pair(color))
+    if self._use_colors:
+      self._windows[name].bkgd(chr, curses.color_pair(color))
 
   """Get character from specified curses window"""
   def get_char(self, name):
@@ -99,7 +107,7 @@ class Screen:
     max_y, max_x = self._windows[name].getmaxyx()
     max_x -= x*2
     if y < max_y and x < max_x:
-      if color is not None:
+      if color is not None and self._use_colors:
         self._windows[name].addnstr(y, x, message, max_x, color)
       else:
         self._windows[name].addnstr(y, x, message, max_x)
@@ -140,13 +148,22 @@ class Screen:
     curses.update_lines_cols()
     return curses.LINES, curses.COLS
 
-  """Returns curses color pair"""
+  """Returns curses color pair
+  # 
+  # Returns NoneType if colors are not in use
+  """
   def color_pair(self, i):
-    return curses.color_pair(i)
+    if self._use_colors:
+      return curses.color_pair(i)
+    else:
+      return None
 
   """Alarm"""
   def alarm(self):
-    curses.beep()
+    if self._config.alarm_type == "beep":
+      curses.beep()
+    elif self._config.alarm_type == "flash":
+      curses.flash()
 
   """Initialize color pairs
   # 
@@ -158,7 +175,7 @@ class Screen:
   # 6: Green on Black
   # 8: Blue on Black
   """
-  def init_color_pairs(self):
+  def _init_color_pairs(self):
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
     curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
