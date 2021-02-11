@@ -38,13 +38,13 @@ If terminal does not support selected type, then the other one is selected autom
 as a fallback.
 
 ### Use of colors
-When 'use_colors' is se to 'True' the program will be beautifully decorated with 
+When `use_colors` is se to `True` the program will be beautifully decorated with 
 meaningful colors for different types of timers:
 
-- 'work' is red
-- 'short break' is green
-- 'long break' is blue
-- Any other type of break will be yellow. 
+- `work` is red
+- `short break` is green
+- `long break` is blue
+- Any other type of timer will be yellow. 
 
 Yes, you may call your alarms whatever you like (albeit they all will be yellow).
 Set this `False` and the program will be plain black and white.
