@@ -50,13 +50,12 @@ Yes, you may call your alarms whatever you like (albeit they all will be yellow)
 Set this `False` and the program will be plain black and white.
 
 ### Timers
-Timers are configured as a dictionary with the key denoting the type of a timer and 
-the number after that denoting the duration of said timer in minutes. Decimals are
+Timers are configured as a list of type-duration pairs, where type is basically 
+a name of the timer and duration is given in minutes. Decimals are
 also accepted (i.e. `work: 0.1` is a work timer lasting 6 seconds).
 
-### Example
+### Example of a configuration file
 
-The example configuration file:
 ```yaml
 alarm_type: "beep"
 use_colors: True
