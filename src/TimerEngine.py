@@ -3,7 +3,7 @@ import time
 class TimerEngine:
   def __init__(self, settings):
     self._settings = settings
-    self._alarm = False
+    self._alarm_triggered = False
     self._work_count = 0
     self._short_count = 0
     self._long_count = 0
@@ -20,7 +20,7 @@ class TimerEngine:
 
   """Acknowledge alarm"""
   def ack_alarm(self):
-    self._alarm = False
+    self._alarm_triggered = False
 
   """Start current timer"""
   def start_timer(self):
@@ -42,7 +42,7 @@ class TimerEngine:
     if self._running:
       self._time_elapsed += self.get_elapsed_time()
       if self._time_elapsed >= self._timer_duration:
-        self._alarm = True
+        self._alarm_triggered = True
         self.increase_counts()
         self.next_timer()
         self._time_elapsed = 0
@@ -82,9 +82,9 @@ class TimerEngine:
 
   """Load timer from timers list"""
   def select_timer(self, timer_id):
-    name, duration = self._settings.get_timer(timer_id)
-    self._timer_name = name
-    self._timer_duration = duration*60
+    timer = self._settings.get_timer(timer_id)
+    self._timer_name = timer["type"]
+    self._timer_duration = timer["duration"]*60
   
   """Reset current timer to beginning"""
   def reset_timer(self):
@@ -104,7 +104,7 @@ class TimerEngine:
 
   @property
   def alarm(self):
-    return self._alarm
+    return self._alarm_triggered
 
   @property
   def started_at(self):

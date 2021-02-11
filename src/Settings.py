@@ -3,14 +3,10 @@ class Settings:
     self._alarm_type = "beep"
     self._use_colors = True
     self._timers = [
-        ("work", 25),
-        ("short break", 5),
-        ("work", 25),
-        ("short break", 5),
-        ("work", 25),
-        ("short break", 5),
-        ("work", 25),
-        ("long break", 35),
+        {"type": "work", "duration": 0.2},
+        {"type": "short break", "duration": 0.1},
+        {"type": "long break", "duration": 0.3},
+        {"type": "custom timer", "duration": 0.4}
     ]
 
   """Get timer by id"""
