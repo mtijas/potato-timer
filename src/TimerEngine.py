@@ -7,6 +7,7 @@ class TimerEngine:
     self._work_count = 0
     self._short_count = 0
     self._long_count = 0
+    self._others_count = 0
     self._current_timer_id = 0
     self._previous_monotonic = 0
     self._running = False
@@ -16,6 +17,9 @@ class TimerEngine:
     self._time_elapsed = 0
     self._total_time_elapsed = 0
     self._total_time_working = 0
+    self._total_time_s_breaks = 0
+    self._total_time_l_breaks = 0
+    self._total_time_others = 0
     self.select_timer(0)
 
   """Acknowledge alarm"""
@@ -40,7 +44,9 @@ class TimerEngine:
   """
   def update(self):
     if self._running:
-      self._time_elapsed += self.get_elapsed_time()
+      since_update = self.get_elapsed_time()
+      self._time_elapsed += since_update
+      self.calc_total_time_spent(since_update)
       if self._time_elapsed >= self._timer_duration:
         self._alarm_triggered = True
         self.increase_counts()
@@ -59,7 +65,6 @@ class TimerEngine:
   # Loops the timers list indefinitely
   """
   def next_timer(self):
-    self.calc_stats()
     self._current_timer_id += 1
     if self._current_timer_id >= len(self._config.timers):
       self._current_timer_id = 0
@@ -73,12 +78,20 @@ class TimerEngine:
       self._short_count += 1
     elif self._timer_name == "long break":
       self._long_count += 1
+    else:
+      self._others_count += 1
 
   """Calculate total time elapsed and time spent working"""
-  def calc_stats(self):
+  def calc_total_time_spent(self, since_update):
     if self._timer_name == "work":
-      self._total_time_working += self._time_elapsed
-    self._total_time_elapsed += self._time_elapsed
+      self._total_time_working += since_update
+    elif self._timer_name == "short break":
+      self._total_time_s_breaks += since_update
+    elif self._timer_name == "long break":
+      self._total_time_l_breaks += since_update
+    else:
+      self._total_time_others += since_update
+    self._total_time_elapsed += since_update
 
   """Load timer from timers list"""
   def select_timer(self, timer_id):
@@ -123,8 +136,24 @@ class TimerEngine:
     return self._work_count
 
   @property
+  def others_count(self):
+    return self._others_count
+
+  @property
   def total_time_working(self):
     return self._total_time_working
+
+  @property
+  def total_time_s_breaks(self):
+    return self._total_time_s_breaks
+
+  @property
+  def total_time_l_breaks(self):
+    return self._total_time_l_breaks
+
+  @property
+  def total_time_others(self):
+    return self._total_time_others
 
   @property
   def total_time_elapsed(self):
