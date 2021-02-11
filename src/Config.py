@@ -18,8 +18,8 @@ class Config:
         {"type": "custom timer", "duration": 0.4}
     ]
     self._possible_files = [
-      f"{Path.home()}/.config/mti-tomato-timer/config.yml",
-      f"{Path.home()}/.mti-tomato-timer-config.yml",
+      "~/.config/mti-tomato-timer/config.yml",
+      "~/.mti-tomato-timer-config.yml",
       "./config.yml",
     ]
     self._selected_config = self.find_config(config_file)
@@ -29,10 +29,12 @@ class Config:
   """Try to find config file"""
   def find_config(self, config_file):
     if config_file is not None:
+      config_file = config_file.replace('~', str(Path.home()), 1)
       if Path(config_file).is_file():
         return config_file
     
     for possibility in self._possible_files:
+      possibility = possibility.replace('~', str(Path.home()), 1)
       if Path(possibility).is_file():
         return possibility
     

@@ -66,16 +66,9 @@ class UserInterface:
     else:
       y = 0
     if self._engine.running:
-      if self._engine.timer_name == "work":
-        self._screen.set_background("statusline", " ", 2)
-      elif self._engine.timer_name == "short break":
-        self._screen.set_background("statusline", " ", 3)
-      elif self._engine.timer_name == "long break":
-        self._screen.set_background("statusline", " ", 4)
-      else:
-        self._screen.set_background("statusline", " ", 5)
-
-      status = f"Timer running: {self._engine.timer_name}"
+      color = self.get_color_id(self._engine.timer_name)
+      self._screen.set_background("statusline", " ", color)
+      status = f'Timer running: {self._engine.timer_name}'
       self._screen.add_centered_str("statusline", y, status)
     else:
       self._screen.set_background("statusline", " ", 1)
@@ -89,30 +82,35 @@ class UserInterface:
     elapsed_delta = timedelta(seconds=round(self._engine.time_elapsed))
     duration_delta = timedelta(seconds=self._engine.timer_duration)
     total_delta = timedelta(seconds=round(self._engine.total_time_elapsed))
-    working_delta = timedelta(
-      seconds=round(self._engine.total_time_working))
+    working_delta = timedelta(seconds=round(self._engine.total_time_working))
+    short_delta = timedelta(seconds=round(self._engine.total_time_s_breaks))
+    long_delta = timedelta(seconds=round(self._engine.total_time_l_breaks))
+    others_delta = timedelta(seconds=round(self._engine.total_time_others))
 
     self._screen.add_str("content", 
-      1, 2, f"{str(elapsed_delta)}/{str(duration_delta)}")
+      1, 2, f'{str(elapsed_delta)}/{str(duration_delta)} in {self._engine.timer_name}')
+    
+    self._screen.add_str("content", 3, 2, f'Completed:')
+    self._screen.add_str("content", 4, 2, 
+      f'Work stints:  {self._engine.work_count}   {working_delta}')
+    self._screen.add_str("content", 5, 2, 
+      f'Short breaks: {self._engine.short_count}   {short_delta}')
+    self._screen.add_str("content", 6, 2, 
+      f'Long breaks:  {self._engine.long_count}   {long_delta}')
+    self._screen.add_str("content", 7, 2, 
+      f'Other timers: {self._engine.others_count}   {others_delta}')
+    self._screen.add_str("content", 8, 2, f'Total time spent: {str(total_delta)}')
+
+    if self._engine.started_at is not None:
+      start_time = time.strftime("%H:%M:%S", self._engine.started_at)
+      self._screen.add_str("content", 
+        10, 2, f'First timer started at {start_time}')
+
+    self._screen.add_str("content", 0, max_x-12, f'[{time.strftime("%H:%M:%S")}]')
+
     if max_y > 12:
-      self._screen.add_str("content", 3, 2, f"Completed:")
-      self._screen.add_str("content", 
-        4, 2, f"Work stints:  {self._engine.work_count}")
-      self._screen.add_str("content", 
-        5, 2, f"Short breaks: {self._engine.short_count}")
-      self._screen.add_str("content", 
-        6, 2, f"Long breaks:  {self._engine.long_count}")
-      self._screen.add_str("content", 
-        8, 2, f"Total time spent:   {str(total_delta)}")
-      self._screen.add_str("content", 
-        9, 2, f"Time spent working: {str(working_delta)}")
+      self._screen.add_str("content", max_y-2, 2, f'Loaded: {self._config.selected_config}')
 
-      if self._engine.started_at is not None:
-        start_time = time.strftime("%H:%M:%S", self._engine.started_at)
-        self._screen.add_str("content", 
-          10, 2, f"First timer started at {start_time}")
-
-    self._screen.add_str("content", 0, max_x-10, f'{time.strftime("%H:%M:%S")}')
     self._screen.add_str("content", max_y-1, 2, "(s)tart/(s)top, (h)elp, (q)uit")
     self._screen.refresh_window("content")
 
@@ -123,20 +121,32 @@ class UserInterface:
     self._screen.add_str("sidebar", 2, 2, "Type (time):")
     self._screen.add_hline("sidebar", 3, 2, "-")
     for idx, timer in enumerate(self._config.timers):
+      color = self.get_color_id(timer["type"])
       if idx == self._engine.current_timer_id:
         self._screen.add_str(
           "sidebar", idx+4, 2, 
-          f'{timer["type"]} ({timer["duration"]})', self._screen.color_pair(6)
+          f'> {timer["type"]} ({timer["duration"]})', self._screen.color_pair(color)
         )
       else:
         self._screen.add_str(
           "sidebar",
           idx+4, 
           2, 
-          f'{timer["type"]} ({timer["duration"]})', 
-          self._screen.color_pair(1)
+          f'  {timer["type"]} ({timer["duration"]})', 
+          self._screen.color_pair(color)
         )
     self._screen.refresh_window("sidebar")
+
+  """Get the id number of color for timer type"""
+  def get_color_id(self, type):
+    if type == "work":
+      return 2
+    elif type == "short break":
+      return 3
+    elif type == "long break":
+      return 4
+    else:
+      return 5
 
   """Handle timer alarms"""
   def handle_alarm(self):
