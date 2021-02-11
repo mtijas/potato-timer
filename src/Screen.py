@@ -105,20 +105,20 @@ class Screen:
   """Add string to screen"""
   def add_str(self, name, y, x, message, color = None):
     max_y, max_x = self._windows[name].getmaxyx()
-    max_x -= x*2
+    max_len = max_x-x-2 # accommodate borders + padding
     if y < max_y and x < max_x:
       if color is not None and self._use_colors:
-        self._windows[name].addnstr(y, x, message, max_x, color)
+        self._windows[name].addnstr(y, x, message, max_len, color)
       else:
-        self._windows[name].addnstr(y, x, message, max_x)
+        self._windows[name].addnstr(y, x, message, max_len)
 
   """Add centered string to screen"""
   def add_centered_str(self, name, y, message):
     max_y, max_x = self._windows[name].getmaxyx()
     x = self.calc_start_x(name, message)
-    max_x -= x+4 # accommodate borders + padding
+    max_len = max_x-x-2 # accommodate borders + padding
     if y < max_y and x < max_x:
-      self._windows[name].addnstr(y, x, message, max_x)
+      self._windows[name].addnstr(y, x, message, max_len)
   
   """Add horizontal line"""
   def add_hline(self, name, y, x, chr):
@@ -177,9 +177,9 @@ class Screen:
   """
   def _init_color_pairs(self):
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
-    curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
-    curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLUE)
-    curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_YELLOW)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(8, curses.COLOR_BLUE, curses.COLOR_BLACK)

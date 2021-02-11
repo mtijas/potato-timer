@@ -26,7 +26,7 @@ python src/TomatoTimer.py
 ## Configuration
 Timers can be configured using YAML. The configuration file is searched from the current
 folder of the timer. The default config file is named config.yml. User may also provide 
-their own configuration file with the command line option `--config 'path/to/config.yml'`.
+their own configuration file with the command line option `-c 'path/to/config.yml'`.
 
 Config will be automatically searched from:
 ```
