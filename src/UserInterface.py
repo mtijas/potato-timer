@@ -125,17 +125,15 @@ class UserInterface:
     for idx, timer in enumerate(self._settings.timers):
       if idx == self._engine.current_timer_id:
         self._screen.add_str(
-          "sidebar", 
-          idx+4, 
-          2, 
-          f"{timer[0]} ({timer[1]})", self._screen.color_pair(6)
+          "sidebar", idx+4, 2, 
+          f'{timer["type"]} ({timer["duration"]})', self._screen.color_pair(6)
         )
       else:
         self._screen.add_str(
           "sidebar",
           idx+4, 
           2, 
-          f"{timer[0]} ({timer[1]})", 
+          f'{timer["type"]} ({timer["duration"]})', 
           self._screen.color_pair(1)
         )
     self._screen.refresh_window("sidebar")
