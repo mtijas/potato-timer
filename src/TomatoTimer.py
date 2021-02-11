@@ -1,11 +1,16 @@
 import TimerEngine
 import UserInterface
 import Screen
-import Settings
+import Config
 
 if __name__ == '__main__':
-  settings = Settings.Settings()
-  engine = TimerEngine.TimerEngine(settings)
-  screen = Screen.Screen(settings)
-  ui = UserInterface.UserInterface(settings, engine, screen)
+  try:
+    config = Config.Config()
+  except FileNotFoundError:
+    print("Settings file was not found")
+    exit()
+  
+  engine = TimerEngine.TimerEngine(config)
+  screen = Screen.Screen(config)
+  ui = UserInterface.UserInterface(config, engine, screen)
   ui.start()

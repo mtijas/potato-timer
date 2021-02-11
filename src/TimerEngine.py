@@ -1,8 +1,8 @@
 import time
 
 class TimerEngine:
-  def __init__(self, settings):
-    self._settings = settings
+  def __init__(self, config):
+    self._config = config
     self._alarm_triggered = False
     self._work_count = 0
     self._short_count = 0
@@ -61,7 +61,7 @@ class TimerEngine:
   def next_timer(self):
     self.calc_stats()
     self._current_timer_id += 1
-    if self._current_timer_id >= len(self._settings.timers):
+    if self._current_timer_id >= len(self._config.timers):
       self._current_timer_id = 0
     self.select_timer(self._current_timer_id)
 
@@ -82,7 +82,7 @@ class TimerEngine:
 
   """Load timer from timers list"""
   def select_timer(self, timer_id):
-    timer = self._settings.get_timer(timer_id)
+    timer = self._config.get_timer(timer_id)
     self._timer_name = timer["type"]
     self._timer_duration = timer["duration"]*60
   
