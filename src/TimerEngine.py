@@ -116,7 +116,7 @@ class TimerEngine:
     return self._current_timer_id
 
   @property
-  def alarm(self):
+  def alarm_triggered(self):
     return self._alarm_triggered
 
   @property

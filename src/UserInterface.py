@@ -55,7 +55,7 @@ class UserInterface:
         self.update_sidebar()
       if self._screen.test_existence("content"):
         self.update_content()
-      time.sleep(0.5)
+      time.sleep(0.2)
 
   """Update statusline window"""
   def update_status(self):
@@ -122,17 +122,18 @@ class UserInterface:
     self._screen.add_hline("sidebar", 3, 2, "-")
     for idx, timer in enumerate(self._config.timers):
       color = self.get_color_id(timer["type"])
+      duration = timedelta(minutes=timer["duration"])
       if idx == self._engine.current_timer_id:
         self._screen.add_str(
           "sidebar", idx+4, 2, 
-          f'> {timer["type"]} ({timer["duration"]})', self._screen.color_pair(color)
+          f'> {timer["type"]} ({duration})', self._screen.color_pair(color)
         )
       else:
         self._screen.add_str(
           "sidebar",
           idx+4, 
           2, 
-          f'  {timer["type"]} ({timer["duration"]})', 
+          f'  {timer["type"]} ({duration})', 
           self._screen.color_pair(color)
         )
     self._screen.refresh_window("sidebar")
@@ -150,7 +151,7 @@ class UserInterface:
 
   """Handle timer alarms"""
   def handle_alarm(self):
-    if self._engine.alarm:
+    if self._engine.alarm_triggered:
       self._screen.alarm()
       self._engine.ack_alarm()
 
@@ -159,8 +160,8 @@ class UserInterface:
     lines, cols = self._screen.screen_size()
     content_width = cols
 
-    if cols >= 60:
-      content_width = round(cols * 0.67)
+    if cols >= 50:
+      content_width = round(cols * 0.6)
       sidebar_width = cols - content_width
       self._screen.resize_or_create_window("sidebar", lines, sidebar_width, 0, content_width)
       self._screen.move_window("sidebar", 0, content_width)
@@ -184,8 +185,6 @@ class UserInterface:
   # Halts timers
   """
   def show_help(self):
-    self._engine.stop_timer()
-    self.update_status()
     self._screen.erase_window("content")
     self._screen.add_str("content", 1, 2, "Tomato Timer Help")
     self._screen.add_str("content", 3, 2, "s: Start and stop timers")
@@ -193,7 +192,13 @@ class UserInterface:
     self._screen.add_str("content", 5, 2, "r: Reset current timer")
     self._screen.add_str("content", 6, 2, "h: Show/hide help")
     self._screen.add_str("content", 7, 2, "q: Quit")
+    
+    self._screen.add_str("content", 9, 2, "For more help please consult README.md at")
+    self._screen.add_str("content", 10, 2, "github.com/mtijas/tomato-timer")
+    self._screen.add_str("content", 12, 2, "(c) Markus Ijäs")
+    
     self._screen.refresh_window("content")
+    
     while True:
       c = self._screen.get_char("content")
       if c == ord('h'):
