@@ -29,7 +29,7 @@ class Screen:
     if curses.has_colors and self._config.use_colors:
       self._use_colors = True
       curses.start_color()
-      self._init_color_pairs()
+      self._init_colors()
 
 
   """Window-specific functions"""
@@ -165,21 +165,18 @@ class Screen:
     elif self._config.alarm_type == "flash":
       curses.flash()
 
-  """Initialize color pairs
-  # 
-  # 1: White on Black
-  # 2: White on Red
-  # 3: White on Green
-  # 4: White on Blue
-  # 5: Black on Yellow
-  # 6: Green on Black
-  # 8: Blue on Black
-  """
-  def _init_color_pairs(self):
+  """Initialize colors"""
+  def _init_colors(self):
+    if curses.can_change_color():
+      curses.init_color(curses.COLOR_BLACK, 50, 50, 50)
+      curses.init_color(curses.COLOR_WHITE, 950, 950, 950)
+      curses.init_color(curses.COLOR_RED, 1000, 300, 300)
+      curses.init_color(curses.COLOR_GREEN, 500, 1000, 300)
+      curses.init_color(curses.COLOR_BLUE, 300, 700, 1000)
+      curses.init_color(curses.COLOR_YELLOW, 1000, 750, 0)
+
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
     curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-    curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(8, curses.COLOR_BLUE, curses.COLOR_BLACK)
