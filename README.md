@@ -35,14 +35,31 @@ Config will be automatically searched from:
 ./config.yml
 ```
 
+### Timers
+Timers are configured as a list of type-duration pairs, where type is basically 
+the name of the timer and duration is given in minutes. Built-in types of timers 
+are `work`, `short break` and `long break`, though you may call your timers whatever 
+you like `i.e. coffee break`.
+
+A single work timer would be configured as follows:
+```yaml
+timers:
+  - type: "work"
+    duration: 25
+```
+
+Decimals are also accepted for duration (i.e. `duration: 0.1` is a timer lasting 6 seconds).
+More examples of timer configurations can be found 
+[in the example configuration file](#example-configuration-file).
+
 ### Alarm type
-Alarm type can be either 'beep' or 'flash'. 
+Alarm type can be either `beep` or `flash`. 
 
 - `beep` rings the terminal bell
 - `flash` flashes the terminal window.
 
 If terminal does not support selected type, then the other one is selected automatically
-as a fallback.
+as a fallback. The default when setting omitted from the file is `beep`.
 
 ### Use of colors
 When `use_colors` is se to `True` the program will be beautifully decorated with 
@@ -53,15 +70,9 @@ meaningful colors for different types of timers:
 - `long break` is blue
 - Any other type of timer will be yellow. 
 
-Yes, you may call your timers whatever you like (albeit they all will be yellow).
-Set this `False` and the program will be plain black and white.
+Set this `False` and the program will be plain black and white. The default is `True`.
 
-### Timers
-Timers are configured as a list of type-duration pairs, where type is basically 
-a name of the timer and duration is given in minutes. Decimals are
-also accepted (i.e. `duration: 0.1` is a timer lasting 6 seconds).
-
-### Example of a configuration file
+### Example configuration file
 
 ```yaml
 alarm_type: "beep"
