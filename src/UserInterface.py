@@ -151,7 +151,7 @@ class UserInterface:
 
   """Handle timer alarms"""
   def handle_alarm(self):
-    if self._engine.alarm:
+    if self._engine.alarm_triggered:
       self._screen.alarm()
       self._engine.ack_alarm()
 

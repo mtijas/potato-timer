@@ -72,8 +72,14 @@ Alarm type can be either `beep` or `flash`.
 - `beep` rings the terminal bell
 - `flash` flashes the terminal window.
 
-If terminal does not support selected type, then the other one is selected automatically
-as a fallback. The default when setting omitted from the file is `beep`.
+The default when setting omitted from the file is `beep`.
+
+Example: `alarm_type: "beep"`
+
+#### Alarm repeat
+Number of times alarm will sound/flash each time alarm triggers.
+
+Example: `alarm_repeat: 3`
 
 #### Use of colors
 When `use_colors` is se to `True` the program will be beautifully decorated with 
@@ -90,6 +96,7 @@ Set this `False` and the program will be plain black and white. The default is `
 
 ```yaml
 alarm_type: "beep"
+alarm_repeat: 3
 use_colors: True
 timers:
   - type: "work"

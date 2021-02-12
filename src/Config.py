@@ -11,6 +11,7 @@ class Config:
   def __init__(self, config_file = None):
     self._alarm_type = "beep"
     self._use_colors = True
+    self._alarm_repeat = 1
     self._timers = [
         {"type": "work", "duration": 0.2},
         {"type": "short break", "duration": 0.1},
@@ -46,6 +47,7 @@ class Config:
     with open(self._selected_config, 'r') as stream:
       settings_yaml = yaml.safe_load(stream)
       self.load_alarm_type(settings_yaml)
+      self.load_alarm_repeat(settings_yaml)
       self.load_use_colors(settings_yaml)
       self.load_timers(settings_yaml)
 
@@ -56,6 +58,12 @@ class Config:
         self._alarm_type = "beep"
       elif settings_yaml["alarm_type"] == "flash":
         self._alarm_type = "flash"
+
+  """Try to load alarm count"""
+  def load_alarm_repeat(self, settings_yaml):
+    if "alarm_repeat" in settings_yaml:
+      if settings_yaml["alarm_repeat"] >= 1:
+        self._alarm_repeat = settings_yaml["alarm_repeat"]
 
   """Try to load color use setting"""
   def load_use_colors(self, settings_yaml):
@@ -97,6 +105,10 @@ class Config:
   @property
   def use_colors(self):
     return self._use_colors
+
+  @property
+  def alarm_repeat(self):
+    return self._alarm_repeat
 
   @property
   def alarm_type(self):

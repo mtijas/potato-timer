@@ -1,4 +1,5 @@
 import curses
+import time
 from curses import wrapper
 
 class Screen:
@@ -161,10 +162,12 @@ class Screen:
 
   """Alarm"""
   def alarm(self):
-    if self._config.alarm_type == "beep":
-      curses.beep()
-    elif self._config.alarm_type == "flash":
-      curses.flash()
+    for i in range(self._config.alarm_repeat):
+      if self._config.alarm_type == "beep":
+        curses.beep()
+      elif self._config.alarm_type == "flash":
+        curses.flash()
+      time.sleep(0.5)
 
   """Initialize colors"""
   def _init_colors(self):
