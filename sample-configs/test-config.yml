@@ -1,0 +1,11 @@
+alarm_type: "beep"
+use_colors: True
+timers:
+  - type: "work"
+    duration: 0.1
+  - type: "short break"
+    duration: 0.2
+  - type: "custom timer"
+    duration: 0.3
+  - type: "long break"
+    duration: 0.4
