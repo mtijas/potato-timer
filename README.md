@@ -5,7 +5,7 @@ in Pop!_OS Linux and occasionally tested in Windows 10.
 ![Tomato Timer UI in color](assets/mti-tomato-timer-colors.png)
 
 ## Downloading the timer
-There is no separate installers provided. Easiest way to get the program is to download one of the 
+Easiest way to get the program is to download one of the 
 [stand-alone executable binaries (for Linux or Windows)](https://github.com/mtijas/tomato-timer/releases) 
 and associated config.yml file. More info on configuration [down below](#configuration). 
 
