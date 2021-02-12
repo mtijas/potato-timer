@@ -37,7 +37,7 @@ Since there is no compiled binaries available the program should be started with
 python src/TomatoTimer.py
 ```
 
-### Configuration
+## Configuration
 Timers can be configured using YAML. The configuration file is searched from the current
 folder of the timer. The default config file is named config.yml. User may also provide 
 their own configuration file with the command line option `-c 'path/to/config.yml'`.
@@ -49,7 +49,7 @@ Config will be automatically searched from:
 ./config.yml
 ```
 
-#### Timers
+### Timers
 Timers are configured as a list of type-duration pairs, where type is basically 
 the name of the timer and duration is given in minutes. Built-in types of timers 
 are `work`, `short break` and `long break`, though you may call your timers whatever 
@@ -66,7 +66,7 @@ Decimals are also accepted for duration (i.e. `duration: 0.1` is a timer lasting
 More examples of timer configurations can be found 
 [in the example configuration file](#example-configuration-file).
 
-#### Alarm type
+### Alarm type
 Alarm type can be either `beep` or `flash`. 
 
 - `beep` rings the terminal bell
@@ -76,12 +76,12 @@ The default when setting omitted from the file is `beep`.
 
 Example: `alarm_type: "beep"`
 
-#### Alarm repeat
+### Alarm repeat
 Number of times alarm will sound/flash each time alarm triggers.
 
 Example: `alarm_repeat: 3`
 
-#### Use of colors
+### Use of colors
 When `use_colors` is se to `True` the program will be beautifully decorated with 
 meaningful colors for different types of timers:
 
@@ -92,7 +92,7 @@ meaningful colors for different types of timers:
 
 Set this `False` and the program will be plain black and white. The default is `True`.
 
-#### Example configuration file
+### Example configuration file
 
 ```yaml
 alarm_type: "beep"
