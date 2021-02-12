@@ -1,6 +1,6 @@
 # tomato-timer
 A simple Pomodoro-style timer with intuitive CLI, written in Python. Developed and tested
-in Pop!_OS Linux so the program might not work in any other OS than Debian-based Linux.
+in Pop!_OS Linux and occasionally tested in Windows 10.
 
 ## Installation
 There is no install script of any sort at this time. Instead clone this repository
@@ -12,9 +12,15 @@ git clone https://github.com/mtijas/tomato-timer.git
 ## Dependencies
 Tomato-timer uses python to run so it should obviously be installed.
 
-Tomato-timer uses PyYAML package to read settings files. Install the package with pip:
+PyYAML package is used to read settings files. Install the package with pip:
 ```
 pip install pyyaml
+```
+
+Curses is used to draw the user interface. In Linux it might already be installed 
+but in Windows you should install the `windows-curses` PyPI package:
+```
+pip install windows-curses
 ```
 
 ## Starting the program
