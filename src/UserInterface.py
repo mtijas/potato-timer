@@ -63,7 +63,7 @@ class UserInterface:
       color = self.get_color_id(self._engine.timer_name)
       status = f'[ Running: {self._engine.timer_name} ]'
     else:
-      color = 1
+      color = 0
       status = "[ Stopped ]"
 
     self._screen.set_background("statusline", " ", color)
@@ -72,7 +72,7 @@ class UserInterface:
     if max_y >= 1:
       time_left = self._engine.timer_duration - self._engine.time_elapsed
       percent = time_left / self._engine.timer_duration
-      self._screen.draw_progress_bar("statusline", 1, 1, max_x-2, percent, color)
+      self._screen.draw_progress_bar("statusline", 1, 1, max_x-2, percent)
 
     self._screen.refresh_window("statusline")
 

@@ -185,13 +185,11 @@ class Screen:
     curses.use_default_colors()
 
     if curses.can_change_color() and not self._config.prefer_terminal_colors:
-      curses.init_color(curses.COLOR_WHITE, 950, 950, 950)
       curses.init_color(curses.COLOR_RED, 1000, 300, 300)
       curses.init_color(curses.COLOR_GREEN, 500, 1000, 300)
       curses.init_color(curses.COLOR_BLUE, 300, 700, 1000)
       curses.init_color(curses.COLOR_YELLOW, 1000, 750, 0)
 
-    curses.init_pair(1, curses.COLOR_WHITE, -1)
     curses.init_pair(2, curses.COLOR_RED, -1)
     curses.init_pair(3, curses.COLOR_GREEN, -1)
     curses.init_pair(4, curses.COLOR_BLUE, -1)
