@@ -50,11 +50,12 @@ their own configuration file with the command line option `-c 'path/to/config.ym
 
 Config will be automatically searched from:
 - config file provided via command line option
-- [$XDG_CONFIG_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+- `$XDG_CONFIG_HOME/potato-timer/config.yml`
 - `~/.config/potato-timer/config.yml`
 - `~/.potato-timer-config.yml`
 - `./config.yml`
 
+More on [$XDG_CONFIG_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
 
 ### Timers
 Timers are configured as a list of type-duration pairs, where type is basically 
