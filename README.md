@@ -100,12 +100,16 @@ meaningful colors for different types of timers:
 
 Set this `False` and the program will be plain black and white. The default is `True`.
 
+If you prefer to use the colors from your terminal, set `prefer_terminal_colors`
+to `True`.
+
 ### Example configuration file
 
 ```yaml
 alarm_type: "beep"
 alarm_repeat: 3
 use_colors: True
+prefer_terminal_colors: False
 timers:
   - type: "work"
     duration: 25

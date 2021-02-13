@@ -12,6 +12,7 @@ class Config:
   def __init__(self, config_file = None):
     self._alarm_type = "beep"
     self._use_colors = True
+    self._prefer_terminal_colors = False
     self._alarm_repeat = 1
 
     self._timers = [
@@ -83,6 +84,12 @@ class Config:
       else:
         self._use_colors = False
 
+    if "prefer_terminal_colors" in settings_yaml:
+      if settings_yaml["prefer_terminal_colors"]:
+        self._prefer_terminal_colors = True
+      else:
+        self._prefer_terminal_colors = False
+
   """Try to load timers"""
   def load_timers(self, settings_yaml):
     loaded_timers = []
@@ -115,6 +122,10 @@ class Config:
   @property
   def use_colors(self):
     return self._use_colors
+
+  @property
+  def prefer_terminal_colors(self):
+    return self._prefer_terminal_colors
 
   @property
   def alarm_repeat(self):
