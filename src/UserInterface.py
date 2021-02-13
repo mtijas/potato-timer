@@ -1,6 +1,4 @@
-import curses
 import time
-from curses import wrapper
 from datetime import timedelta
 
 

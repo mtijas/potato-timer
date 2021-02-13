@@ -1,4 +1,5 @@
 import yaml
+from appdirs import AppDirs
 from pathlib import Path
 
 class Config:
@@ -12,35 +13,44 @@ class Config:
     self._alarm_type = "beep"
     self._use_colors = True
     self._alarm_repeat = 1
+
     self._timers = [
         {"type": "work", "duration": 0.2},
         {"type": "short break", "duration": 0.1},
         {"type": "long break", "duration": 0.3},
         {"type": "custom timer", "duration": 0.4}
     ]
+
     self._possible_files = [
       "~/.config/mti-tomato-timer/config.yml",
       "~/.mti-tomato-timer-config.yml",
       "./config.yml",
     ]
-    self._selected_config = self.find_config(config_file)
+
+    if config_file is not None:
+      self._possible_files.insert(0, config_file)
+
+    self.insert_xdg_conf_location()
+
+    self._selected_config = self.find_config()
     if self._selected_config is not None:
       self.read_config()
 
   """Try to find config file"""
-  def find_config(self, config_file):
-    if config_file is not None:
-      config_file = config_file.replace('~', str(Path.home()), 1)
-      if Path(config_file).is_file():
-        return config_file
-    
+  def find_config(self):
     for possibility in self._possible_files:
-      possibility = possibility.replace('~', str(Path.home()), 1)
-      if Path(possibility).is_file():
-        return possibility
-    
+      p = Path(possibility)
+      expanded = p.expanduser()
+      if expanded.is_file():
+        return expanded
     return None
 
+  """Insert XDG config file location"""
+  def insert_xdg_conf_location(self):
+    dirs = AppDirs("mti-tomato-timer")
+    xdg_config = dirs.user_config_dir
+    p = Path(xdg_config).joinpath('config.yml')
+    self._possible_files.insert(1, str(p))
 
   """Load the config file"""
   def read_config(self):

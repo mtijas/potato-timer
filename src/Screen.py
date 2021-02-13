@@ -1,6 +1,5 @@
 import curses
 import time
-from curses import wrapper
 
 class Screen:
   def __init__(self, config):

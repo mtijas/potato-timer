@@ -19,10 +19,16 @@ git clone https://github.com/mtijas/tomato-timer.git
 
 ### Dependencies
 Tomato-timer uses python to run so it should obviously be installed.
+Minimum required version of python is 3.8.
 
 PyYAML package is used to read settings files. Install the package with pip:
 ```
 pip install pyyaml
+```
+
+Appdirs is used to help find the preferred config location. Install with pip:
+```
+pip install appdirs
 ```
 
 Curses is used to draw the user interface. In Linux it might already be installed 
