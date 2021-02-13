@@ -22,8 +22,8 @@ class Config:
     ]
 
     self._possible_files = [
-      "~/.config/mti-tomato-timer/config.yml",
-      "~/.mti-tomato-timer-config.yml",
+      "~/.config/potato-timer/config.yml",
+      "~/.potato-timer-config.yml",
       "./config.yml",
     ]
 
@@ -47,7 +47,7 @@ class Config:
 
   """Insert XDG config file location"""
   def insert_xdg_conf_location(self):
-    dirs = AppDirs("mti-tomato-timer")
+    dirs = AppDirs("potato-timer")
     xdg_config = dirs.user_config_dir
     p = Path(xdg_config).joinpath('config.yml')
     self._possible_files.insert(1, str(p))

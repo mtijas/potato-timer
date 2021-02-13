@@ -187,7 +187,7 @@ class UserInterface:
   """
   def show_help(self):
     self._screen.erase_window("content")
-    self._screen.add_str("content", 1, 2, "Tomato Timer Help")
+    self._screen.add_str("content", 1, 2, "Potato Timer Help")
     self._screen.add_str("content", 3, 2, "s: Start and stop timers")
     self._screen.add_str("content", 4, 2, "n: Next timer (starts from 0)")
     self._screen.add_str("content", 5, 2, "r: Reset current timer")
@@ -195,7 +195,7 @@ class UserInterface:
     self._screen.add_str("content", 7, 2, "q: Quit")
     
     self._screen.add_str("content", 9, 2, "For more help please consult README.md at")
-    self._screen.add_str("content", 10, 2, "github.com/mtijas/tomato-timer")
+    self._screen.add_str("content", 10, 2, "github.com/mtijas/potato-timer")
     self._screen.add_str("content", 12, 2, "(c) Markus Ijäs")
     
     self._screen.refresh_window("content")

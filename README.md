@@ -1,12 +1,12 @@
-# tomato-timer
+# potato-timer
 A simple Pomodoro-style timer with intuitive CLI, written in Python. Developed and tested
 in Pop!_OS Linux and occasionally tested in Windows 10.
 
-![Tomato Timer UI in color](assets/mti-tomato-timer-colors.png)
+![Potato Timer UI in color](assets/mti-tomato-timer-colors.png)
 
 ## Downloading the timer
 Easiest way to get the program is to download one of the 
-[stand-alone executable binaries (for Linux or Windows)](https://github.com/mtijas/tomato-timer/releases) 
+[stand-alone executable binaries (for Linux or Windows)](https://github.com/mtijas/potato-timer/releases) 
 and associated config.yml file. More info on configuration [down below](#configuration). 
 
 ## Running from source
@@ -14,11 +14,11 @@ and associated config.yml file. More info on configuration [down below](#configu
 ### Getting the source code files
 Clone this repository to the folder of your choice:
 ```
-git clone https://github.com/mtijas/tomato-timer.git
+git clone https://github.com/mtijas/potato-timer.git
 ```
 
 ### Dependencies
-Tomato-timer uses python to run so it should obviously be installed.
+Potato Timer uses python to run so it should obviously be installed.
 Minimum required version of python is 3.8.
 
 PyYAML package is used to read settings files. Install the package with pip:
@@ -40,7 +40,7 @@ pip install windows-curses
 ### Starting the program
 Since there is no compiled binaries available the program should be started with python:
 ```
-python src/TomatoTimer.py
+python src/PotatoTimer.py
 ```
 
 ## Configuration
@@ -49,11 +49,12 @@ folder of the timer. The default config file is named config.yml. User may also 
 their own configuration file with the command line option `-c 'path/to/config.yml'`.
 
 Config will be automatically searched from:
-```
-~/.config/mti-tomato-timer/config.yml
-~/.mti-tomato-timer-config.yml
-./config.yml
-```
+- config file provided via command line option
+- [$XDG_CONFIG_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+- `~/.config/potato-timer/config.yml`
+- `~/.potato-timer-config.yml`
+- `./config.yml`
+
 
 ### Timers
 Timers are configured as a list of type-duration pairs, where type is basically 
