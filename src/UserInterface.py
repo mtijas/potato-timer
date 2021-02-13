@@ -106,7 +106,10 @@ class UserInterface:
       self._screen.add_str("content", 
         10, 2, f'First timer started at {start_time}')
 
-    self._screen.add_str("content", 0, max_x-12, f'[{time.strftime("%H:%M:%S")}]')
+    if max_x > 12:
+      self._screen.add_str("content", 0, max_x-12, f'[{time.strftime("%H:%M:%S")}]')
+    else:
+      self._screen.add_str("content", 0, 0, f'{time.strftime("%H:%M:%S")}')
 
     if max_y > 12:
       self._screen.add_str("content", max_y-2, 2, f'Loaded: {self._config.selected_config}')
