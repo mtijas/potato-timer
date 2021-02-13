@@ -107,7 +107,7 @@ class Screen:
   def add_str(self, name, y, x, message, color = None):
     max_y, max_x = self._windows[name].getmaxyx()
     max_len = max_x-x-2 # accommodate borders + padding
-    if y < max_y and x < max_x and max_len > x:
+    if y < max_y and x < max_x and max_len > 0:
       if color is not None and self._use_colors:
         self._windows[name].addnstr(y, x, message, max_len, color)
       else:
