@@ -1,5 +1,6 @@
 import curses
 import time
+import math
 
 class Screen:
   def __init__(self, config):
@@ -38,43 +39,43 @@ class Screen:
   #
   # Creates a new window if window does not already exist
   """
-  def resize_or_create_window(self, name, height, width, start_y, start_x):
-    if self.test_existence(name):
-      self._windows[name].resize(height, width)
+  def resize_or_create_window(self, win, height, width, start_y, start_x):
+    if self.test_existence(win):
+      self._windows[win].resize(height, width)
     else:
-      self._windows[name] = curses.newwin(height, width, start_y, start_x)
+      self._windows[win] = curses.newwin(height, width, start_y, start_x)
 
   """Remove window"""
-  def remove_window(self, name):
-    if self.test_existence(name):
-      del self._windows[name]
+  def remove_window(self, win):
+    if self.test_existence(win):
+      del self._windows[win]
 
   """Move window"""
-  def move_window(self, name, y, x):
-    self._windows[name].mvwin(y, x)
+  def move_window(self, win, y, x):
+    self._windows[win].mvwin(y, x)
 
   """Set window background"""
-  def set_background(self, name, chr, color):
+  def set_background(self, win, chr, color):
     if self._use_colors:
-      self._windows[name].bkgd(chr, curses.color_pair(color))
+      self._windows[win].bkgd(chr, curses.color_pair(color))
 
   """Get character from specified curses window"""
-  def get_char(self, name):
-    c = self._windows[name].getch()
+  def get_char(self, win):
+    c = self._windows[win].getch()
     self.update_status(c)
     return c
 
   """Clear window and redraw border"""
-  def erase_window(self, name):
-    if self.test_existence(name):
-      self._windows[name].erase()
-      y, x = self._windows[name].getmaxyx()
+  def erase_window(self, win):
+    if self.test_existence(win):
+      self._windows[win].erase()
+      y, x = self._windows[win].getmaxyx()
       if y >= 3 and x >= 3:  # borders only for big enough window
-        self._windows[name].border()
+        self._windows[win].border()
 
   """Refresh selected window"""
-  def refresh_window(self, name):
-    self._windows[name].refresh()
+  def refresh_window(self, win):
+    self._windows[win].refresh()
 
   """Set nodelay attributes to True for all windows"""
   def set_nodelays(self):
@@ -82,12 +83,12 @@ class Screen:
       window.nodelay(True)
 
   """Test for window existence"""
-  def test_existence(self, name):
-    return name in self._windows
+  def test_existence(self, win):
+    return win in self._windows
 
   """Get max y and x"""
-  def get_max_yx(self, name):
-    return self._windows[name].getmaxyx()
+  def get_max_yx(self, win):
+    return self._windows[win].getmaxyx()
 
   @property
   def is_resized(self):
@@ -103,34 +104,48 @@ class Screen:
   """Text management functions"""
 
   """Add string to screen"""
-  def add_str(self, name, y, x, message, color = None):
-    max_y, max_x = self._windows[name].getmaxyx()
-    max_len = max_x-x-2 # accommodate borders + padding
+  def add_str(self, win, y, x, message, color = None):
+    max_y, max_x = self._windows[win].getmaxyx()
+    max_len = max_x-x-1 # accommodate borders + padding
     if y < max_y and x < max_x and max_len > 0:
       if color is not None and self._use_colors:
-        self._windows[name].addnstr(y, x, message, max_len, color)
+        self._windows[win].addnstr(y, x, message, max_len, color)
       else:
-        self._windows[name].addnstr(y, x, message, max_len)
+        self._windows[win].addnstr(y, x, message, max_len)
 
   """Add centered string to screen"""
-  def add_centered_str(self, name, y, message, color = None):
-    x = self.calc_start_x(name, message)
-    self.add_str(name, y, x, message, color)
+  def add_centered_str(self, win, y, message, color = None):
+    x = self.calc_start_x(win, message)
+    self.add_str(win, y, x, message, color)
   
   """Add horizontal line"""
-  def add_hline(self, name, y, x, chr):
-    max_y, max_x = self._windows[name].getmaxyx()
+  def add_hline(self, win, y, x, chr):
+    max_y, max_x = self._windows[win].getmaxyx()
     max_len = max_x-x-2 # accommodate borders + padding
     if y < max_y and x < max_x:
-      self._windows[name].hline(y, x, chr, max_len)
+      self._windows[win].hline(y, x, chr, max_len)
 
   """Calculate starting point for horizontally centered text"""
-  def calc_start_x(self, name, text):
-    y, x = self._windows[name].getmaxyx()
+  def calc_start_x(self, win, text):
+    y, x = self._windows[win].getmaxyx()
     pos = x // 2 - len(text) // 2
     if pos >= 0:
       return pos
     return 0
+
+  """Draw horizontal bar"""
+  def draw_progress_bar(self, win, y, x, total_len, percent, color = None):
+    needed_chars = round(total_len * percent)
+    if needed_chars > total_len:
+      needed_chars = total_len
+    elif needed_chars < 0:
+      needed_chars = 0
+    
+    bar = ""
+    for i in range(0, needed_chars):
+      bar += "#"
+
+    self.add_str(win, y, x, bar, color)
 
 
 
@@ -167,16 +182,17 @@ class Screen:
 
   """Initialize colors"""
   def _init_colors(self):
+    curses.use_default_colors()
+
     if curses.can_change_color():
-      curses.init_color(curses.COLOR_BLACK, 50, 50, 50)
       curses.init_color(curses.COLOR_WHITE, 950, 950, 950)
       curses.init_color(curses.COLOR_RED, 1000, 300, 300)
       curses.init_color(curses.COLOR_GREEN, 500, 1000, 300)
       curses.init_color(curses.COLOR_BLUE, 300, 700, 1000)
       curses.init_color(curses.COLOR_YELLOW, 1000, 750, 0)
 
-    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
-    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
-    curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    curses.init_pair(1, curses.COLOR_WHITE, -1)
+    curses.init_pair(2, curses.COLOR_RED, -1)
+    curses.init_pair(3, curses.COLOR_GREEN, -1)
+    curses.init_pair(4, curses.COLOR_BLUE, -1)
+    curses.init_pair(5, curses.COLOR_YELLOW, -1)

@@ -59,18 +59,21 @@ class UserInterface:
   def update_status(self):
     self._screen.erase_window("statusline")
     max_y, max_x = self._screen.get_max_yx("statusline")
-    if max_y > 1:
-      y = 1
-    else:
-      y = 0
     if self._engine.running:
       color = self.get_color_id(self._engine.timer_name)
-      self._screen.set_background("statusline", " ", color)
-      status = f'Timer running: {self._engine.timer_name}'
-      self._screen.add_centered_str("statusline", y, status)
+      status = f'[ Running: {self._engine.timer_name} ]'
     else:
-      self._screen.set_background("statusline", " ", 1)
-      self._screen.add_centered_str("statusline", y, "Timer stopped")
+      color = 1
+      status = "[ Stopped ]"
+
+    self._screen.set_background("statusline", " ", color)
+    self._screen.add_centered_str("statusline", 0, status)
+    
+    if max_y >= 1:
+      time_left = self._engine.timer_duration - self._engine.time_elapsed
+      percent = time_left / self._engine.timer_duration
+      self._screen.draw_progress_bar("statusline", 1, 1, max_x-2, percent, color)
+
     self._screen.refresh_window("statusline")
 
   """Update content window"""
@@ -105,7 +108,7 @@ class UserInterface:
         10, 2, f'First timer started at {start_time}')
 
     if max_x > 12:
-      self._screen.add_str("content", 0, max_x-12, f'[{time.strftime("%H:%M:%S")}]')
+      self._screen.add_str("content", 0, max_x-12, f' {time.strftime("%H:%M:%S")} ')
     else:
       self._screen.add_str("content", 0, 0, f'{time.strftime("%H:%M:%S")}')
 
