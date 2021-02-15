@@ -2,7 +2,7 @@
 A simple Pomodoro-style timer with intuitive CLI, written in Python. Developed and tested
 in Pop!_OS Linux and occasionally tested in Windows 10.
 
-![Potato Timer UI in color](assets/mti-tomato-timer-colors.png)
+![Potato Timer UI in color](assets/potato-timer_ui.png)
 
 ## Downloading the timer
 Easiest way to get the program is to download one of the 
