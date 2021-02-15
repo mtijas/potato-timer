@@ -124,22 +124,22 @@ class UserInterface:
     self._screen.add_str("sidebar", 1, 2, "Current timers")
     self._screen.add_str("sidebar", 2, 2, "Type (time):")
     self._screen.add_hline("sidebar", 3, 2, "-")
+
     for idx, timer in enumerate(self._config.timers):
       color = self.get_color_id(timer["type"])
       duration = timedelta(minutes=timer["duration"])
+
       if idx == self._engine.current_timer_id:
-        self._screen.add_str(
-          "sidebar", idx+4, 2, 
-          f'> {timer["type"]} ({duration})', self._screen.color_pair(color)
-        )
-      else:
-        self._screen.add_str(
-          "sidebar",
-          idx+4, 
-          2, 
-          f'  {timer["type"]} ({duration})', 
-          self._screen.color_pair(color)
-        )
+        self._screen.add_str("sidebar", idx+4, 2, '>')
+      
+      self._screen.add_str(
+        "sidebar",
+        idx+4, 
+        4, 
+        f'{timer["type"]} ({duration})', 
+        self._screen.color_pair(color)
+      )
+
     self._screen.refresh_window("sidebar")
 
   """Get the id number of color for timer type"""
