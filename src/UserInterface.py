@@ -8,17 +8,16 @@ class UserInterface:
     self._engine = engine
     self._screen = screen
 
+
   """Start user interface"""
   def start(self):
     self._screen.start()
     self.manage_windows()
-    self._screen.erase_window("statusline")
-    self._screen.erase_window("content")
-    self._screen.erase_window("sidebar")
     try:
       self.main_loop()
     finally:
       self._screen.stop()
+
 
   """User interface main loop
   # 
@@ -53,6 +52,7 @@ class UserInterface:
       self.update_content()
       time.sleep(0.2)
 
+
   """Update statusline window"""
   def update_statusline(self):
     if not self._screen.test_existence("statusline"):
@@ -77,12 +77,12 @@ class UserInterface:
 
     self._screen.refresh_window("statusline")
 
+
   """Update content window"""
   def update_content(self):
     if not self._screen.test_existence("content"):
       return
 
-    self._screen.erase_window("content")
     max_y, max_x = self._screen.get_max_yx("content")
     elapsed_delta = timedelta(seconds=round(self._engine.time_elapsed))
     duration_delta = timedelta(seconds=self._engine.timer_duration)
@@ -92,42 +92,74 @@ class UserInterface:
     long_delta = timedelta(seconds=round(self._engine.total_time_l_breaks))
     others_delta = timedelta(seconds=round(self._engine.total_time_others))
 
+    self._screen.clear_line("content", 1)
     self._screen.add_str("content", 
       1, 2, f'{str(elapsed_delta)}/{str(duration_delta)} in {self._engine.timer_name}')
-    
-    self._screen.add_str("content", 3, 2, f'Completed:')
-    self._screen.add_str("content", 4, 2, 
-      f'Work stints:  {self._engine.work_count}   {working_delta}')
-    self._screen.add_str("content", 5, 2, 
-      f'Short breaks: {self._engine.short_count}   {short_delta}')
-    self._screen.add_str("content", 6, 2, 
-      f'Long breaks:  {self._engine.long_count}   {long_delta}')
-    self._screen.add_str("content", 7, 2, 
-      f'Other timers: {self._engine.others_count}   {others_delta}')
-    self._screen.add_str("content", 8, 2, f'Total time spent: {str(total_delta)}')
+
+    self._screen.add_str("content", 4, 16, f'{self._engine.work_count}')
+    self._screen.add_str("content", 4, 20, f'{working_delta}')
+    self._screen.add_str("content", 5, 16, f'{self._engine.short_count}')
+    self._screen.add_str("content", 5, 20, f'{short_delta}')
+    self._screen.add_str("content", 6, 16, f'{self._engine.long_count}')
+    self._screen.add_str("content", 6, 20, f'{long_delta}')
+    self._screen.add_str("content", 7, 16, f'{self._engine.others_count}')
+    self._screen.add_str("content", 7, 20, f'{others_delta}')
+    self._screen.add_str("content", 8, 20, f'{str(total_delta)}')
 
     if self._engine.started_at is not None:
       start_time = time.strftime("%H:%M:%S", self._engine.started_at)
-      self._screen.add_str("content", 
-        10, 2, f'First timer started at {start_time}')
+      self._screen.add_str("content", 10, 25, f'{start_time}')
 
     if max_x > 12:
       self._screen.add_str("content", 0, max_x-12, f' {time.strftime("%H:%M:%S")} ')
     else:
       self._screen.add_str("content", 0, 0, f'{time.strftime("%H:%M:%S")}')
 
-    if max_y > 12:
-      self._screen.add_str("content", max_y-2, 2, f'Loaded: {self._config.selected_config}')
-
-    self._screen.add_str("content", max_y-1, 2, "(s)tart/(s)top, (h)elp, (q)uit")
     self._screen.refresh_window("content")
+
+
+  """Prepopulate content window with static content"""
+  def prepopulate_content(self):
+    if not self._screen.test_existence("content"):
+      return
+
+    self._screen.erase_window("content")
+    max_y, max_x = self._screen.get_max_yx("content")
+    
+    self._screen.add_str("content", 3, 2, 'Completed:')
+    self._screen.add_str("content", 4, 2, 'Work stints:')
+    self._screen.add_str("content", 5, 2, 'Short breaks:')
+    self._screen.add_str("content", 6, 2, 'Long breaks:')
+    self._screen.add_str("content", 7, 2, 'Other timers:')
+    self._screen.add_str("content", 8, 2, 'Total time spent:')
+    self._screen.add_str("content", 10, 2, f'First timer started at')
+    self._screen.add_str("content", max_y-2, 2, f'Loaded: {self._config.selected_config}')
+    self._screen.add_str("content", max_y-1, 2, "(s)tart/(s)top, (h)elp, (q)uit")
+
+    self._screen.refresh_window("content")
+
 
   """Update sidebar window"""
   def update_sidebar(self):
     if not self._screen.test_existence("sidebar"):
       return
 
+    for idx, timer in enumerate(self._config.timers):
+      if idx == self._engine.current_timer_id:
+        self._screen.add_str("sidebar", idx+4, 2, '>')
+      else:
+        self._screen.add_str("sidebar", idx+4, 2, ' ')
+
+    self._screen.refresh_window("sidebar")
+
+
+  """Prepopulate sidebar window with static content"""
+  def prepopulate_sidebar(self):
+    if not self._screen.test_existence("sidebar"):
+      return
+
     self._screen.erase_window("sidebar")
+
     self._screen.add_str("sidebar", 1, 2, "Current timers")
     self._screen.add_str("sidebar", 2, 2, "Type (time):")
     self._screen.add_hline("sidebar", 3, "-")
@@ -135,9 +167,6 @@ class UserInterface:
     for idx, timer in enumerate(self._config.timers):
       color = self.get_color_id(timer["type"])
       duration = timedelta(minutes=timer["duration"])
-
-      if idx == self._engine.current_timer_id:
-        self._screen.add_str("sidebar", idx+4, 2, '>')
       
       self._screen.add_str(
         "sidebar",
@@ -149,22 +178,6 @@ class UserInterface:
 
     self._screen.refresh_window("sidebar")
 
-  """Get the id number of color for timer type"""
-  def get_color_id(self, type):
-    if type == "work":
-      return 2
-    elif type == "short break":
-      return 3
-    elif type == "long break":
-      return 4
-    else:
-      return 5
-
-  """Handle timer alarms"""
-  def handle_alarm(self):
-    if self._engine.alarm_triggered:
-      self._screen.alarm()
-      self._engine.ack_alarm()
 
   """Create, remove and resize windows"""
   def manage_windows(self):
@@ -186,15 +199,31 @@ class UserInterface:
       self._screen.remove_window("content")
       self._screen.resize_or_create_window("statusline", 1, content_width, 0, 0)
 
-    self._screen.erase_window("statusline")
-    self._screen.erase_window("content")
-    self._screen.erase_window("sidebar")
     self._screen.set_nodelays()
+    self.prepopulate_sidebar()
+    self.prepopulate_content()
 
-  """Show help inside content window
-  # 
-  # Halts timers
-  """
+
+  """Get the id number of color for timer type"""
+  def get_color_id(self, type):
+    if type == "work":
+      return 2
+    elif type == "short break":
+      return 3
+    elif type == "long break":
+      return 4
+    else:
+      return 5
+
+
+  """Handle timer alarms"""
+  def handle_alarm(self):
+    if self._engine.alarm_triggered:
+      self._screen.alarm()
+      self._engine.ack_alarm()
+
+
+  """Show help inside content window"""
   def show_help(self):
     self._screen.erase_window("content")
     self._screen.add_str("content", 1, 2, "Potato Timer Help")
@@ -216,3 +245,4 @@ class UserInterface:
         break
       time.sleep(0.5)
     self._screen.erase_window("content")
+    self.prepopulate_content()

@@ -1,6 +1,5 @@
 import curses
 import time
-import math
 
 class Screen:
   def __init__(self, config):
@@ -8,6 +7,7 @@ class Screen:
     self._windows = {} # Store windows as a dictionary for easy usage
     self._is_resized = False
     self._use_colors = False
+
 
   """Initialize curses with defaults"""
   def start(self):
@@ -19,6 +19,7 @@ class Screen:
     self.stdscr.keypad(True)
     curses.setsyx(-1, -1)
 
+
   """Revert terminal to original state"""
   def stop(self):
     curses.nocbreak()
@@ -26,12 +27,14 @@ class Screen:
     curses.echo()
     curses.endwin()
 
+
   """Try to use colors"""
   def try_colors(self):
     if curses.has_colors and self._config.use_colors:
       self._use_colors = True
       curses.start_color()
       self._init_colors()
+
 
 
   """Window-specific functions"""
@@ -46,25 +49,30 @@ class Screen:
     else:
       self._windows[win] = curses.newwin(height, width, start_y, start_x)
 
+
   """Remove window"""
   def remove_window(self, win):
     if self.test_existence(win):
       del self._windows[win]
 
+
   """Move window"""
   def move_window(self, win, y, x):
     self._windows[win].mvwin(y, x)
+
 
   """Set window background"""
   def set_background(self, win, chr, color):
     if self._use_colors:
       self._windows[win].bkgd(chr, curses.color_pair(color))
 
+
   """Get character from specified curses window"""
   def get_char(self, win):
     c = self._windows[win].getch()
     self.update_status(c)
     return c
+
 
   """Clear window and redraw border"""
   def erase_window(self, win):
@@ -74,27 +82,33 @@ class Screen:
       if y >= 3 and x >= 3:  # borders only for big enough window
         self._windows[win].border()
 
+
   """Refresh selected window"""
   def refresh_window(self, win):
     self._windows[win].refresh()
+
 
   """Set nodelay attributes to True for all windows"""
   def set_nodelays(self):
     for window in self._windows.values():
       window.nodelay(True)
 
+
   """Test for window existence"""
   def test_existence(self, win):
     return win in self._windows
+
 
   """Get max y and x"""
   def get_max_yx(self, win):
     return self._windows[win].getmaxyx()
 
+
   @property
   def is_resized(self):
     """Getter for is_resized flag"""
     return self._is_resized
+
 
   """Acknowledge is_resized flag (situation handled)"""
   def ack_resize(self):
@@ -114,17 +128,20 @@ class Screen:
       else:
         self._windows[win].addnstr(y, x, message, max_len)
 
+
   """Add centered string to screen"""
   def add_centered_str(self, win, y, message, color = None):
     x = self.calc_start_x(win, message)
     self.add_str(win, y, x, message, color)
   
+
   """Add horizontal line"""
   def add_hline(self, win, y, chr):
     max_y, max_x = self._windows[win].getmaxyx()
     max_len = max_x-4 # accommodate borders + padding
     if y < max_y:
       self._windows[win].hline(y, 2, chr, max_len)
+
 
   """Calculate starting point for horizontally centered text"""
   def calc_start_x(self, win, text):
@@ -133,6 +150,7 @@ class Screen:
     if pos >= 0:
       return pos
     return 0
+
 
   """Draw horizontal bar"""
   def draw_progress_bar(self, win, y, x, total_len, percent, color = None):
@@ -149,6 +167,11 @@ class Screen:
     self.add_str(win, y, x, bar, color)
 
 
+  """Clear a line while retaining borders and padding"""
+  def clear_line(self, win, y):
+    self.add_hline(win, y, " ")
+
+
 
   """Helpers"""
 
@@ -157,10 +180,12 @@ class Screen:
     if c == curses.KEY_RESIZE:
       self._is_resized = True
 
+
   """Get screen size"""
   def screen_size(self):
     curses.update_lines_cols()
     return curses.LINES, curses.COLS
+
 
   """Returns curses color pair
   # 
@@ -172,6 +197,7 @@ class Screen:
     else:
       return None
 
+
   """Alarm"""
   def alarm(self):
     for i in range(self._config.alarm_repeat):
@@ -180,6 +206,7 @@ class Screen:
       elif self._config.alarm_type == "flash":
         curses.flash()
       time.sleep(0.5)
+
 
   """Initialize colors"""
   def _init_colors(self):
