@@ -120,11 +120,11 @@ class Screen:
     self.add_str(win, y, x, message, color)
   
   """Add horizontal line"""
-  def add_hline(self, win, y, x, chr):
+  def add_hline(self, win, y, chr):
     max_y, max_x = self._windows[win].getmaxyx()
-    max_len = max_x-x-2 # accommodate borders + padding
-    if y < max_y and x < max_x:
-      self._windows[win].hline(y, x, chr, max_len)
+    max_len = max_x-4 # accommodate borders + padding
+    if y < max_y:
+      self._windows[win].hline(y, 2, chr, max_len)
 
   """Calculate starting point for horizontally centered text"""
   def calc_start_x(self, win, text):
