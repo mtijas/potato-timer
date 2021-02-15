@@ -35,7 +35,13 @@ class Config:
 
     self._selected_config = self.find_config()
     if self._selected_config is not None:
-      self.read_config()
+      try:
+        self.read_config()
+      except:
+        print(f'Error reading config: {self._selected_config}')
+        print("Please check that the file is formatted correctly.")
+        exit()
+
 
   """Try to find config file"""
   def find_config(self):
@@ -46,12 +52,14 @@ class Config:
         return expanded
     return None
 
+
   """Insert XDG config file location"""
   def insert_xdg_conf_location(self):
     dirs = AppDirs("potato-timer")
     xdg_config = dirs.user_config_dir
     p = Path(xdg_config).joinpath('config.yml')
     self._possible_files.insert(1, str(p))
+
 
   """Load the config file"""
   def read_config(self):
@@ -62,6 +70,7 @@ class Config:
       self.load_use_colors(settings_yaml)
       self.load_timers(settings_yaml)
 
+
   """Try to load alarm type setting"""
   def load_alarm_type(self, settings_yaml):
     if "alarm_type" in settings_yaml:
@@ -70,11 +79,13 @@ class Config:
       elif settings_yaml["alarm_type"] == "flash":
         self._alarm_type = "flash"
 
+
   """Try to load alarm count"""
   def load_alarm_repeat(self, settings_yaml):
     if "alarm_repeat" in settings_yaml:
       if settings_yaml["alarm_repeat"] >= 1:
         self._alarm_repeat = settings_yaml["alarm_repeat"]
+
 
   """Try to load color use setting"""
   def load_use_colors(self, settings_yaml):
@@ -90,6 +101,7 @@ class Config:
       else:
         self._prefer_terminal_colors = False
 
+
   """Try to load timers"""
   def load_timers(self, settings_yaml):
     loaded_timers = []
@@ -104,12 +116,14 @@ class Config:
     if loaded_timers:
       self._timers = loaded_timers
 
+
   """Get timer by id"""
   def get_timer(self, timer_id):
     if timer_id < len(self._timers):
       return self._timers[timer_id]
     else:
       raise IndexError("Timer not found")
+
 
   @property
   def selected_config(self):

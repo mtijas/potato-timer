@@ -1,8 +1,9 @@
+import argparse
+import Config
+import Screen
+import sys
 import TimerEngine
 import UserInterface
-import Screen
-import Config
-import argparse
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -14,11 +15,16 @@ if __name__ == '__main__':
 
   try:
     config = Config.Config(args.config)
+    engine = TimerEngine.TimerEngine(config)
+    screen = Screen.Screen(config)
+    ui = UserInterface.UserInterface(config, engine, screen)
+    ui.start()
   except FileNotFoundError:
     print("Settings file was not found")
     exit()
-  
-  engine = TimerEngine.TimerEngine(config)
-  screen = Screen.Screen(config)
-  ui = UserInterface.UserInterface(config, engine, screen)
-  ui.start()
+  except SystemExit:
+    print("Exiting...")
+    exit()
+  except:
+    print("Unexpected error: ", sys.exc_info()[0])
+    exit()
