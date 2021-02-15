@@ -1,0 +1,11 @@
+alarm_type: "beep"
+alarm_repeat: 1
+use_colors: False
+prefer_terminal_colors: False
+# An example of "standard" Finnish double lecture at university
+# Not to be taken seriously of course ;)
+timers:
+  - type: "teach"
+    duration: 45
+  - type: "teach"
+    duration: 45

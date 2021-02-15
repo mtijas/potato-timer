@@ -101,7 +101,8 @@ meaningful colors for different types of timers:
 Set this `False` and the program will be plain black and white. The default is `True`.
 
 If you prefer to use the colors from your terminal, set `prefer_terminal_colors`
-to `True`.
+to `True`. For both the terminal and built-in color schemes the background will be "transparent", 
+as in not have any other color than what your terminal has.
 
 ### Example configuration file
 
