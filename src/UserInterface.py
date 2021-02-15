@@ -48,15 +48,16 @@ class UserInterface:
 
       self._engine.update()
       self.handle_alarm()
-      self.update_status()
-      if self._screen.test_existence("sidebar"):
-        self.update_sidebar()
-      if self._screen.test_existence("content"):
-        self.update_content()
+      self.update_statusline()
+      self.update_sidebar()
+      self.update_content()
       time.sleep(0.2)
 
   """Update statusline window"""
-  def update_status(self):
+  def update_statusline(self):
+    if not self._screen.test_existence("statusline"):
+      return
+
     self._screen.erase_window("statusline")
     max_y, max_x = self._screen.get_max_yx("statusline")
     if self._engine.running:
@@ -78,6 +79,9 @@ class UserInterface:
 
   """Update content window"""
   def update_content(self):
+    if not self._screen.test_existence("content"):
+      return
+
     self._screen.erase_window("content")
     max_y, max_x = self._screen.get_max_yx("content")
     elapsed_delta = timedelta(seconds=round(self._engine.time_elapsed))
@@ -120,10 +124,13 @@ class UserInterface:
 
   """Update sidebar window"""
   def update_sidebar(self):
+    if not self._screen.test_existence("sidebar"):
+      return
+
     self._screen.erase_window("sidebar")
     self._screen.add_str("sidebar", 1, 2, "Current timers")
     self._screen.add_str("sidebar", 2, 2, "Type (time):")
-    self._screen.add_hline("sidebar", 3, 2, "-")
+    self._screen.add_hline("sidebar", 3, "-")
 
     for idx, timer in enumerate(self._config.timers):
       color = self.get_color_id(timer["type"])
