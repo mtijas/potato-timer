@@ -48,10 +48,16 @@ class TimerEngine:
       self._time_elapsed += since_update
       self.calc_total_time_spent(since_update)
       if self._time_elapsed >= self._timer_duration:
+        """
+        # Issue 6: Elapsed time can't just be set to zero since it would mean
+        # losing the overflow on slower update cycles. This presets the next
+        # timer with the time spent over designated duration of a previous timer
+        # and effectively eliminates lag.
+        """
+        self._time_elapsed = self._time_elapsed - self._timer_duration
         self._alarm_triggered = True
         self.increase_counts()
         self.next_timer()
-        self._time_elapsed = 0
 
   """Returns time elapsed since last call"""
   def get_elapsed_time(self):
