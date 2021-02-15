@@ -14,6 +14,7 @@ class Screen:
     self.stdscr = curses.initscr()
     curses.noecho()
     curses.cbreak()
+    curses.curs_set(0)
     self.try_colors()
     self.stdscr.keypad(True)
     curses.setsyx(-1, -1)
