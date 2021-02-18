@@ -52,8 +52,12 @@ class Config:
         for possibility in self._possible_files:
             p = Path(possibility)
             expanded = p.expanduser()
-            if expanded.is_file():
-                return expanded
+            """Older pythons than 3.8 might still throw an exception"""
+            try:
+                if expanded.is_file():
+                    return expanded
+            except:
+                continue
         return None
 
     def insert_xdg_conf_location(self):

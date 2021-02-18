@@ -21,7 +21,7 @@ git clone https://github.com/mtijas/potato-timer.git
 
 ### Dependencies
 Potato Timer uses python to run so it should obviously be installed.
-Minimum required version of python is 3.8.
+Minimum required version of python is 3.7.
 
 PyYAML package is used to read settings files. Install the package with pip:
 ```
