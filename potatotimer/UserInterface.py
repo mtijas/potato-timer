@@ -138,7 +138,7 @@ class UserInterface:
         self._screen.add_str("content", 8, 2, 'Total time spent:')
         self._screen.add_str("content", 10, 2, f'First timer started at')
         self._screen.add_str("content", max_y-2, 2,
-                             f"Loaded: {self._config.selected_config}")
+                             f"Config: {self._config.selected_config}")
         self._screen.add_str("content", max_y-1, 2,
                              "(s)tart/(s)top, (h)elp, (q)uit")
 
