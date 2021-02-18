@@ -9,41 +9,7 @@ Easiest way to get the program is to install via `pip`:
 ```
 pip install potatotimer
 ```
-and create your own config.yml file. More info on configuration [down below](#configuration). 
-
-## Running from source
-
-### Getting the source code files
-Clone this repository to the folder of your choice:
-```
-git clone https://github.com/mtijas/potato-timer.git
-```
-
-### Dependencies
-Potato Timer uses python to run so it should obviously be installed.
-Minimum required version of python is 3.7.
-
-PyYAML package is used to read settings files. Install the package with pip:
-```
-pip install pyyaml
-```
-
-Appdirs is used to help find the preferred config location. Install with pip:
-```
-pip install appdirs
-```
-
-Curses is used to draw the user interface. In Linux it might already be installed 
-but in Windows you should install the `windows-curses` PyPI package:
-```
-pip install windows-curses
-```
-
-### Starting the program
-Since there is no compiled binaries available the program should be started with python:
-```
-python scripts/potatotimer
-```
+and create your own config.yml file. More info on configuration down below. 
 
 ## Configuration
 Timers can be configured using YAML. You should create one of those 
