@@ -46,15 +46,17 @@ python scripts/potatotimer
 ```
 
 ## Configuration
-Timers can be configured using YAML. The configuration file is searched from the current
-folder of the timer. The default config file is named config.yml. User may also provide 
-their own configuration file with the command line option `-c 'path/to/config.yml'`.
+Timers can be configured using YAML. You should create one of those 
+configuration files listed below, or you may provide an alternative  
+configuration file with the command line option `-c 'path/to/config.yml'`.
 
-Config will be automatically searched from:
+Config will be automatically searched from (in this order):
 - config file provided via command line option
 - `$XDG_CONFIG_HOME/potatotimer/config.yml`
 - `~/.config/potatotimer/config.yml`
 - `~/.potatotimer-config.yml`
+
+[An example configuration file](#example-configuration-file) is something worth looking at.
 
 More on [$XDG_CONFIG_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
 
