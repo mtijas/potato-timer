@@ -238,7 +238,7 @@ class UserInterface:
         self._screen.add_str("content", 7, 2, "q: Quit")
 
         self._screen.add_str(
-            "content", 9, 2, "For more help please consult README.md at")
+            "content", 9, 2, "For more help and config examples please consult:")
         self._screen.add_str(
             "content", 10, 2, "github.com/mtijas/potato-timer")
         self._screen.add_str("content", 12, 2, "(c) Markus Ijäs")

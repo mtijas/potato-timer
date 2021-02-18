@@ -17,16 +17,20 @@ class Config:
         self._alarm_repeat = 1
 
         self._timers = [
-            {"type": "work", "duration": 0.2},
-            {"type": "short break", "duration": 0.1},
-            {"type": "long break", "duration": 0.3},
-            {"type": "custom timer", "duration": 0.4}
+            {"type": "work", "duration": 25},
+            {"type": "short break", "duration": 5},
+            {"type": "work", "duration": 25},
+            {"type": "short break", "duration": 5},
+            {"type": "work", "duration": 25},
+            {"type": "short break", "duration": 5},
+            {"type": "work", "duration": 25},
+            {"type": "short break", "duration": 5},
+            {"type": "long break", "duration": 30},
         ]
 
         self._possible_files = [
-            "~/.config/potato-timer/config.yml",
-            "~/.potato-timer-config.yml",
-            "./config.yml",
+            "~/.config/potatotimer/config.yml",
+            "~/.potatotimer-config.yml",
         ]
 
         if config_file is not None:
@@ -54,7 +58,7 @@ class Config:
 
     def insert_xdg_conf_location(self):
         """Insert XDG config file location"""
-        dirs = AppDirs("potato-timer")
+        dirs = AppDirs("potatotimer")
         xdg_config = dirs.user_config_dir
         p = Path(xdg_config).joinpath('config.yml')
         self._possible_files.insert(1, str(p))

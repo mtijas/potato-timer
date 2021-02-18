@@ -5,9 +5,11 @@ in Pop!_OS Linux and occasionally tested in Windows 10.
 ![Potato Timer UI in color](assets/potato-timer_ui.png)
 
 ## Downloading the timer
-Easiest way to get the program is to download one of the 
-[stand-alone executable binaries (for Linux or Windows)](https://github.com/mtijas/potato-timer/releases) 
-and associated config.yml file. More info on configuration [down below](#configuration). 
+Easiest way to get the program is to install via `pip`:
+```
+pip install potatotimer
+```
+and create your own config.yml file. More info on configuration [down below](#configuration). 
 
 ## Running from source
 
@@ -40,7 +42,7 @@ pip install windows-curses
 ### Starting the program
 Since there is no compiled binaries available the program should be started with python:
 ```
-python src/PotatoTimer.py
+python scripts/potatotimer
 ```
 
 ## Configuration
@@ -50,10 +52,9 @@ their own configuration file with the command line option `-c 'path/to/config.ym
 
 Config will be automatically searched from:
 - config file provided via command line option
-- `$XDG_CONFIG_HOME/potato-timer/config.yml`
-- `~/.config/potato-timer/config.yml`
-- `~/.potato-timer-config.yml`
-- `./config.yml`
+- `$XDG_CONFIG_HOME/potatotimer/config.yml`
+- `~/.config/potatotimer/config.yml`
+- `~/.potatotimer-config.yml`
 
 More on [$XDG_CONFIG_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
 
@@ -71,7 +72,7 @@ timers:
 ```
 
 Decimals are also accepted for duration (i.e. `duration: 0.1` is a timer lasting 6 seconds).
-More examples of timer configurations can be found 
+More thorough example of timer configuration can be found 
 [in the example configuration file](#example-configuration-file).
 
 ### Alarm type
@@ -108,7 +109,7 @@ as in not have any other color than what your terminal has.
 
 ```yaml
 alarm_type: "beep"
-alarm_repeat: 3
+alarm_repeat: 2
 use_colors: True
 prefer_terminal_colors: False
 timers:
@@ -130,3 +131,5 @@ timers:
     duration: 35
 
 ```
+
+More sample configs in the [sample-configs folder](sample-configs/).

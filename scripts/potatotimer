@@ -1,11 +1,10 @@
-import argparse
-import Config
-import Screen
-import sys
-import TimerEngine
-import UserInterface
+#!/usr/bin/env python
 
-if __name__ == '__main__':
+import argparse
+import sys
+from potatotimer import *
+
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-c', '--config', dest='config',
@@ -15,10 +14,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     try:
-        config = Config.Config(args.config)
-        engine = TimerEngine.TimerEngine(config)
-        screen = Screen.Screen(config)
-        ui = UserInterface.UserInterface(config, engine, screen)
+        config = Config(args.config)
+        engine = TimerEngine(config)
+        screen = Screen(config)
+        ui = UserInterface(config, engine, screen)
         ui.start()
     except FileNotFoundError:
         print("Settings file was not found")
@@ -29,3 +28,6 @@ if __name__ == '__main__':
     except:
         print("Unexpected error: ", sys.exc_info()[0])
         exit()
+
+if __name__ == '__main__':
+    main()
