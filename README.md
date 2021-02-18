@@ -2,7 +2,7 @@
 A simple Pomodoro-style timer with intuitive CLI, written in Python. Developed and tested
 in Pop!_OS Linux and occasionally tested in Windows 10.
 
-![Potato Timer UI in color](assets/potato-timer_ui.png)
+![Potato Timer UI in color](https://github.com/mtijas/potato-timer/blob/main/assets/potato-timer_ui.png)
 
 ## Downloading the timer
 Easiest way to get the program is to install via `pip`:
@@ -40,8 +40,8 @@ timers:
 ```
 
 Decimals are also accepted for duration (i.e. `duration: 0.1` is a timer lasting 6 seconds).
-More thorough example of timer configuration can be found 
-[in the example configuration file](#example-configuration-file).
+More thorough example of timer configuration can be found in the 
+example configuration file further down.
 
 ### Alarm type
 Alarm type can be either `beep` or `flash`. 
@@ -100,4 +100,4 @@ timers:
 
 ```
 
-More sample configs in the [sample-configs folder](sample-configs/).
+More sample configs in the [sample-configs folder](https://github.com/mtijas/potato-timer/tree/main/sample-configs).
