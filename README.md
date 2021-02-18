@@ -1,53 +1,30 @@
-# tomato-timer
+# potato-timer
 A simple Pomodoro-style timer with intuitive CLI, written in Python. Developed and tested
 in Pop!_OS Linux and occasionally tested in Windows 10.
 
-![Tomato Timer UI in color](assets/mti-tomato-timer-colors.png)
+![Potato Timer UI in color](assets/potato-timer_ui.png)
 
 ## Downloading the timer
-Easiest way to get the program is to download one of the 
-[stand-alone executable binaries (for Linux or Windows)](https://github.com/mtijas/tomato-timer/releases) 
-and associated config.yml file. More info on configuration [down below](#configuration). 
-
-## Running from source
-
-### Getting the source code files
-Clone this repository to the folder of your choice:
+Easiest way to get the program is to install via `pip`:
 ```
-git clone https://github.com/mtijas/tomato-timer.git
+pip install potatotimer
 ```
-
-### Dependencies
-Tomato-timer uses python to run so it should obviously be installed.
-
-PyYAML package is used to read settings files. Install the package with pip:
-```
-pip install pyyaml
-```
-
-Curses is used to draw the user interface. In Linux it might already be installed 
-but in Windows you should install the `windows-curses` PyPI package:
-```
-pip install windows-curses
-```
-
-### Starting the program
-Since there is no compiled binaries available the program should be started with python:
-```
-python src/TomatoTimer.py
-```
+and create your own config.yml file. More info on configuration down below. 
 
 ## Configuration
-Timers can be configured using YAML. The configuration file is searched from the current
-folder of the timer. The default config file is named config.yml. User may also provide 
-their own configuration file with the command line option `-c 'path/to/config.yml'`.
+Timers can be configured using YAML. You should create one of those 
+configuration files listed below, or you may provide an alternative  
+configuration file with the command line option `-c 'path/to/config.yml'`.
 
-Config will be automatically searched from:
-```
-~/.config/mti-tomato-timer/config.yml
-~/.mti-tomato-timer-config.yml
-./config.yml
-```
+Config will be automatically searched from (in this order):
+- config file provided via command line option
+- `$XDG_CONFIG_HOME/potatotimer/config.yml`
+- `~/.config/potatotimer/config.yml`
+- `~/.potatotimer-config.yml`
+
+[An example configuration file](#example-configuration-file) is something worth looking at.
+
+More on [$XDG_CONFIG_HOME](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
 
 ### Timers
 Timers are configured as a list of type-duration pairs, where type is basically 
@@ -63,7 +40,7 @@ timers:
 ```
 
 Decimals are also accepted for duration (i.e. `duration: 0.1` is a timer lasting 6 seconds).
-More examples of timer configurations can be found 
+More thorough example of timer configuration can be found 
 [in the example configuration file](#example-configuration-file).
 
 ### Alarm type
@@ -92,12 +69,17 @@ meaningful colors for different types of timers:
 
 Set this `False` and the program will be plain black and white. The default is `True`.
 
+If you prefer to use the colors from your terminal, set `prefer_terminal_colors`
+to `True`. For both the terminal and built-in color schemes the background will be "transparent", 
+as in not have any other color than what your terminal has.
+
 ### Example configuration file
 
 ```yaml
 alarm_type: "beep"
-alarm_repeat: 3
+alarm_repeat: 2
 use_colors: True
+prefer_terminal_colors: False
 timers:
   - type: "work"
     duration: 25
@@ -117,3 +99,5 @@ timers:
     duration: 35
 
 ```
+
+More sample configs in the [sample-configs folder](sample-configs/).

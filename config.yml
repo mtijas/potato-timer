@@ -1,6 +1,7 @@
 alarm_type: "beep"
 alarm_repeat: 3
 use_colors: True
+prefer_terminal_colors: False
 timers:
   - type: "work"
     duration: 25

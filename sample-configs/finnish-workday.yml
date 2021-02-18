@@ -1,0 +1,21 @@
+alarm_type: "beep"
+alarm_repeat: 2
+use_colors: True
+prefer_terminal_colors: False
+# An example of a 7.5 hour Finnish workday
+# Start at 7:00, finish at 15:30
+timers:
+  - type: "work"
+    duration: 120
+  - type: "short break"
+    duration: 7.5
+  - type: "work"
+    duration: 112.5
+  - type: "long break"
+    duration: 30
+  - type: "work"
+    duration: 150
+  - type: "short break"
+    duration: 7.5
+  - type: "work"
+    duration: 82.5
